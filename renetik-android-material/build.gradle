@@ -6,7 +6,7 @@ dependencies {
     implementation project(':renetik-android-event')
     implementation project(':renetik-android-ui')
     implementation project(':renetik-android-controller')
-    api 'com.google.android.material:material:1.13.0'
+    api 'com.google.android.material:material:1.14.0'
 
     testImplementation project(':renetik-android-testing')
 }

@@ -4,7 +4,7 @@ else apply from: '../../library.gradle'
 dependencies {
     implementation project(':renetik-android-framework')
     api 'androidx.test:core-ktx:1.7.0'
-    api('androidx.test.uiautomator:uiautomator:2.3.0')
+    api('androidx.test.uiautomator:uiautomator:2.4.0')
     api('com.adevinta.android:barista:4.3.0') {
         exclude group: 'org.jetbrains.kotlin'
     }
