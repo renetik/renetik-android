@@ -3,6 +3,8 @@ package renetik.android.core.lang
 import renetik.android.core.logging.CSLog.logError
 import renetik.android.core.logging.CSLog.logWarn
 
+// TODO:!!! Review thi api and its uses
+
 inline fun <reified E : Throwable> catch(block: () -> Unit): Result<Unit> = try {
     Result.success(block())
 } catch (e: Throwable) {
@@ -10,6 +12,14 @@ inline fun <reified E : Throwable> catch(block: () -> Unit): Result<Unit> = try 
 }
 
 inline fun catchAll(block: () -> Unit): Result<Unit> = catch<Throwable>(block)
+
+inline fun <reified E : Throwable> catchAllExceptWarn(block: () -> Unit): Result<Unit> = try {
+    Result.success(block())
+} catch (e: Throwable) {
+    if (e is E) throw e
+    logWarn(e)
+    Result.failure(e)
+}
 
 inline fun <reified E : Throwable> catchWarn(block: () -> Unit): Result<Unit> = try {
     Result.success(block())
@@ -52,7 +62,8 @@ inline fun <ReturnType, reified ExceptionType : Throwable>
 
 inline fun <ReturnType> catchAllWarnReturn(
     onExceptionReturn: ReturnType, tryFunction: () -> ReturnType,
-) = catchWarnReturn<Exception, ReturnType>(message = null, tryFunction) { onExceptionReturn }
+): ReturnType =
+    catchWarnReturn<Exception, ReturnType>(message = null, tryFunction) { onExceptionReturn }
 
 inline fun catchAllWarn(tryFunction: () -> Unit) = catchAllWarnReturn(Unit, tryFunction)
 
