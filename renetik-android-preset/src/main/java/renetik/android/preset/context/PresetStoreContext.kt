@@ -77,18 +77,24 @@ class PresetStoreContext(
     override fun memoryContext(parent: CSHasDestruct, key: String?) =
         RuntimeStoreContext(parent, this, key).init(this)
 
-    override fun onChange(function: (Unit) -> Unit) = preset.onChange(function)
-
-    fun <T : CSPresetProperty<*>> add(key: String, property: T): T = property.apply {
-        properties[key] = this
-    }
+    override fun onChange(function: (Unit) -> Unit) =
+        preset.onChange(function)
 
     fun add(preset: CSPreset<*, *>) {
         presets += preset
         preset.eventDestruct { if (!isDestructed) presets -= preset }
     }
 
-    override fun clear(): Unit = preset.store.operation {
+    fun <T : CSPresetProperty<*>> add(key: String, property: T): T {
+        properties[key] = property
+        property.eventDestruct {
+            if (!isDestructed && properties[key] === property)
+                properties.remove(key)
+        }
+        return property
+    }
+
+    override fun clear() = preset.store.operation {
         properties.values.toList().forEach { it.clear() }
         childContexts.toList().onEach { it.clear() }
         presets.toList().onEach { it.clear() }

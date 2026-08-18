@@ -58,9 +58,12 @@ class CustomStoreContext(
         preset.eventDestruct { if (!isDestructed) presets -= preset }
     }
 
-    fun <T : CSStoreProperty<*>> add(property: T): T = property.apply {
-        properties += this
-        eventDestruct { properties -= this }
+    fun <T : CSStoreProperty<*>> add(property: T): T {
+        properties += property
+        (property as? CSHasDestruct)?.eventDestruct {
+            if (!isDestructed) properties -= property
+        }
+        return property
     }
 
     override fun clear() = store.operation {
