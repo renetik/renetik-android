@@ -36,7 +36,8 @@ class CustomStoreContext(
     private val presets = mutableListOf<CSPreset<*, *>>()
 
     private fun <T : CSStoreContext> T.init() = apply {
-        childContexts += this; eventDestruct { childContexts -= this }
+        childContexts += this
+        eventDestruct { childContexts -= this }
     }
 
     override fun context(parent: CSHasDestruct, key: String?) =
@@ -52,14 +53,14 @@ class CustomStoreContext(
     override fun onChange(function: (Unit) -> Unit): CSRegistration =
         store.eventLoaded.listen { function(Unit) }
 
-
     fun add(preset: CSPreset<*, *>) {
         presets += preset
         preset.eventDestruct { if (!isDestructed) presets -= preset }
     }
 
     fun <T : CSStoreProperty<*>> add(property: T): T = property.apply {
-        properties += this; eventDestruct { properties -= this }
+        properties += this
+        eventDestruct { properties -= this }
     }
 
     override fun clear() = store.operation {
