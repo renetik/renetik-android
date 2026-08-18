@@ -49,8 +49,9 @@ class PresetStoreContext(
     }
 
     override val data: CSJsonObjectInterface = preset.store
-
     private val childContexts = mutableListOf<CSStoreContext>()
+    private val properties = mutableMapOf<String, CSPresetProperty<*>>()
+    private val presets = mutableListOf<CSPreset<*, *>>()
 
     private fun <T : CSStoreContext> T.init(parent: PresetStoreContext) = apply {
         parent.childContexts += this
@@ -78,12 +79,9 @@ class PresetStoreContext(
 
     override fun onChange(function: (Unit) -> Unit) = preset.onChange(function)
 
-    private val properties = mutableMapOf<String, CSPresetProperty<*>>()
-    private fun <T : CSPresetProperty<*>> T.init(key: String) = apply {
+    fun <T : CSPresetProperty<*>> add(key: String, property: T): T = property.apply {
         properties[key] = this
     }
-
-    private val presets = mutableListOf<CSPreset<*, *>>()
 
     fun add(preset: CSPreset<*, *>) {
         presets += preset
@@ -91,91 +89,90 @@ class PresetStoreContext(
     }
 
     override fun clear(): Unit = preset.store.operation {
-        properties.values.forEach { it.clear() }
+        properties.values.toList().forEach { it.clear() }
         childContexts.toList().onEach { it.clear() }
         presets.toList().onEach { it.clear() }
     }
 
-    private val String.newKey: String
-        get() = presetId?.let { "$it $this" } ?: this
+    fun storeKey(key: String): String = presetId?.let { "$it $key" } ?: key
 
     override fun property(
         key: String, default: String, onChange: ArgFun<String>?,
-    ): CSStringValuePresetProperty = preset.property(
-        this, key.newKey, default, onChange
-    ).init(key)
+    ): CSStringValuePresetProperty = add(key, preset.property(
+        this, storeKey(key), default, onChange
+    ))
 
     override fun property(
         key: String, default: Boolean, onChange: ArgFun<Boolean>?,
-    ): CSBooleanValuePresetProperty = preset.property(
-        this, key.newKey, default, onChange
-    ).init(key)
+    ): CSBooleanValuePresetProperty = add(key, preset.property(
+        this, storeKey(key), default, onChange
+    ))
 
     override fun property(
         key: String, default: Float, onChange: ArgFun<Float>?,
-    ): CSFloatValuePresetProperty = preset.property(
-        this, key.newKey, default, onChange
-    ).init(key)
+    ): CSFloatValuePresetProperty = add(key, preset.property(
+        this, storeKey(key), default, onChange
+    ))
 
     override fun property(
         key: String, default: Int, onChange: ArgFun<Int>?
-    ): CSIntValuePresetProperty = preset.property(
-        this, key.newKey, default, onChange
-    ).init(key)
+    ): CSIntValuePresetProperty = add(key, preset.property(
+        this, storeKey(key), default, onChange
+    ))
 
     override fun property(
         key: String, default: () -> Int, onChange: ArgFun<Int>?
-    ): CSIntValuePresetProperty = preset.property(
-        this, key.newKey, default, onChange
-    ).init(key)
+    ): CSIntValuePresetProperty = add(key, preset.property(
+        this, storeKey(key), default, onChange
+    ))
 
     override fun <T> property(
         key: String, values: () -> Collection<T>,
         default: () -> T, onChange: ArgFun<T>?
-    ): CSListItemValuePresetProperty<T> = preset.property(
-        this, key.newKey, values, default, onChange
-    ).init(key)
+    ): CSListItemValuePresetProperty<T> = add(key, preset.property(
+        this, storeKey(key), values, default, onChange
+    ))
 
     override fun nullIntProperty(
         key: String, default: Int?, onChange: ((value: Int?) -> Unit)?
-    ): CSIntNullablePresetProperty = preset.nullIntProperty(
-        this, key.newKey, default, onChange
-    ).init(key)
+    ): CSIntNullablePresetProperty = add(key, preset.nullIntProperty(
+        this, storeKey(key), default, onChange
+    ))
 
     override fun nullFloatProperty(
         key: String, default: Float?, onChange: ((value: Float?) -> Unit)?
-    ): CSFloatNullablePresetProperty = preset.nullFloatProperty(
-        this, key.newKey, default, onChange
-    ).init(key)
+    ): CSFloatNullablePresetProperty = add(key, preset.nullFloatProperty(
+        this, storeKey(key), default, onChange
+    ))
 
     override fun nullDoubleProperty(
         key: String, default: Double?, onChange: ((value: Double?) -> Unit)?
-    ): CSDoubleNullablePresetProperty = preset.nullDoubleProperty(
-        this, key.newKey, default, onChange
-    ).init(key)
+    ): CSDoubleNullablePresetProperty = add(key, preset.nullDoubleProperty(
+        this, storeKey(key), default, onChange
+    ))
 
     override fun nullStringProperty(
         key: String, default: String?, onChange: ((value: String?) -> Unit)?
-    ): CSStringNullablePresetProperty = preset.nullStringProperty(
-        this, key.newKey, default, onChange
-    ).init(key)
+    ): CSStringNullablePresetProperty = add(key, preset.nullStringProperty(
+        this, storeKey(key), default, onChange
+    ))
 
     override fun <T> nullListItemProperty(
         key: String, values: List<T>, default: T?, onChange: ((value: T?) -> Unit)?
-    ): CSListItemNullablePresetProperty<T?> = preset.nullListItemProperty(
-        this, key.newKey, values, default, onChange
-    ).init(key)
+    ): CSListItemNullablePresetProperty<T?> = add(key, preset.nullListItemProperty(
+        this, storeKey(key), values, default, onChange
+    ))
 
     override fun property(
         key: String, default: List<Int>, onChange: ArgFun<List<Int>>?
-    ): CSIntListValuePresetProperty = preset.property(
-        this, key.newKey, default, onChange
-    ).init(key)
+    ): CSIntListValuePresetProperty = add(key, preset.property(
+        this, storeKey(key), default, onChange
+    ))
 
     override fun <T : CSHasId> property(
         key: String, values: List<T>,
         default: List<T>, onChange: ArgFun<List<T>>?
-    ): CSHasIdListValuePresetProperty<T> = preset.property(
-        this, key.newKey, values, default, onChange
-    ).init(key)
+    ): CSHasIdListValuePresetProperty<T> = add(key, preset.property(
+        this, storeKey(key), values, default, onChange
+    ))
 }

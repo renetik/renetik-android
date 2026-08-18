@@ -29,9 +29,11 @@ class CustomStoreContext(
     private val hasId: CSHasId? = null,
     override val key: String? = null,
 ) : CSModel(parent), CSStoreContext {
-    override val data: CSJsonObjectInterface = store
     override val id = hasId?.id?.let { id -> key?.let { "$id $it" } ?: id } ?: key ?: ""
+    override val data: CSJsonObjectInterface = store
     private val childContexts = mutableListOf<CSStoreContext>()
+    private val properties = mutableListOf<CSStoreProperty<*>>()
+    private val presets = mutableListOf<CSPreset<*, *>>()
 
     private fun <T : CSStoreContext> T.init() = apply {
         childContexts += this; eventDestruct { childContexts -= this }
@@ -51,15 +53,13 @@ class CustomStoreContext(
         store.eventLoaded.listen { function(Unit) }
 
 
-    private val properties = mutableListOf<CSStoreProperty<*>>()
-    private fun <T : CSStoreProperty<*>> T.init() = apply {
-        properties += this; eventDestruct { properties -= this }
+    fun add(preset: CSPreset<*, *>) {
+        presets += preset
+        preset.eventDestruct { if (!isDestructed) presets -= preset }
     }
 
-    private val presets = mutableListOf<CSPreset<*, *>>()
-
-    fun add(preset: CSPreset<*, *>) {
-        presets += preset; preset.eventDestruct { presets -= preset }
+    fun <T : CSStoreProperty<*>> add(property: T): T = property.apply {
+        properties += this; eventDestruct { properties -= this }
     }
 
     override fun clear() = store.operation {
@@ -68,62 +68,61 @@ class CustomStoreContext(
         presets.toList().onEach { it.clear() }
     }
 
-    private val String.newKey
-        get() = if (id.isNotBlank()) "$id $this" else this
+    fun storeKey(key: String) = if (id.isNotBlank()) "$id $key" else key
 
     override fun property(
         key: String, default: String, onChange: ArgFun<String>?,
-    ) = store.property(this, key.newKey, default, onChange).init()
+    ) = add(store.property(this, storeKey(key), default, onChange))
 
     override fun property(
         key: String, default: Boolean, onChange: ArgFun<Boolean>?,
-    ) = store.property(this, key.newKey, default, onChange).init()
+    ) = add(store.property(this, storeKey(key), default, onChange))
 
     override fun property(
         key: String, default: Float, onChange: ArgFun<Float>?,
-    ) = store.property(this, key.newKey, default, onChange).init()
+    ) = add(store.property(this, storeKey(key), default, onChange))
 
     override fun property(
         key: String, default: Int, onChange: ArgFun<Int>?
-    ) = store.property(this, key.newKey, default, onChange).init()
+    ) = add(store.property(this, storeKey(key), default, onChange))
 
     override fun property(
         key: String, default: () -> Int, onChange: ArgFun<Int>?
-    ) = store.property(this, key.newKey, default, onChange).init()
+    ) = add(store.property(this, storeKey(key), default, onChange))
 
     override fun <T> property(
         key: String, values: () -> Collection<T>, default: () -> T, onChange: ArgFun<T>?
-    ) = store.property(this, key.newKey, values, default, onChange).init()
+    ) = add(store.property(this, storeKey(key), values, default, onChange))
 
     override fun nullIntProperty(
         key: String, default: Int?, onChange: ((value: Int?) -> Unit)?
-    ) = store.nullIntProperty(this, key.newKey, default, onChange).init()
+    ) = add(store.nullIntProperty(this, storeKey(key), default, onChange))
 
     override fun nullFloatProperty(
         key: String, default: Float?, onChange: ((value: Float?) -> Unit)?
-    ) = store.nullFloatProperty(this, key.newKey, default, onChange).init()
+    ) = add(store.nullFloatProperty(this, storeKey(key), default, onChange))
 
     override fun nullDoubleProperty(
         key: String, default: Double?, onChange: ((value: Double?) -> Unit)?
-    ) = store.nullDoubleProperty(this, key.newKey, default, onChange).init()
+    ) = add(store.nullDoubleProperty(this, storeKey(key), default, onChange))
 
     override fun nullStringProperty(
         key: String, default: String?, onChange: ((value: String?) -> Unit)?
-    ) = store.nullStringProperty(this, key.newKey, default, onChange).init()
+    ) = add(store.nullStringProperty(this, storeKey(key), default, onChange))
 
     override fun <T> nullListItemProperty(
         key: String, values: List<T>, default: T?, onChange: ((value: T?) -> Unit)?
-    ) = store.nullListItemProperty(key.newKey, values, default, onChange)
-        .parent(this).listenLoad().init()
+    ) = add(store.nullListItemProperty(storeKey(key), values, default, onChange)
+        .parent(this).listenLoad())
 
     override fun property(
         key: String, default: List<Int>, onChange: ArgFun<List<Int>>?
-    ) = CSIntListValueStoreProperty(store, key.newKey, default, onChange)
-        .parent(this).listenLoad().init()
+    ) = add(CSIntListValueStoreProperty(store, storeKey(key), default, onChange)
+        .parent(this).listenLoad())
 
     override fun <T : CSHasId> property(
         key: String, values: List<T>,
         default: List<T>, onChange: ArgFun<List<T>>?
-    ) = CSHasIdListValueStoreProperty(store, key.newKey, default, onChange = onChange)
-        .parent(this).listenLoad().init()
+    ) = add(CSHasIdListValueStoreProperty(store, storeKey(key), default, onChange = onChange)
+        .parent(this).listenLoad())
 }
