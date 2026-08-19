@@ -23,12 +23,13 @@ import renetik.android.event.CSEvent.Companion.event
 import renetik.android.event.change.CSHasChangeValue
 import renetik.android.event.change.CSValueFunction
 import renetik.android.event.change.action
+import renetik.android.event.change.delegate
 import renetik.android.event.registration.CSRegistration
 import renetik.android.event.registration.CSRegistration.Companion.CSRegistration
 import renetik.android.ui.R
+import renetik.android.ui.view.adapter.CSTextWatcherAdapter
 import renetik.android.ui.view.gone
 import renetik.android.ui.view.propertyWithTag
-import renetik.android.ui.view.adapter.CSTextWatcherAdapter
 import kotlin.properties.Delegates.notNull
 
 
@@ -72,6 +73,12 @@ val <T : TextView> T.textChange
             return onTextChange { value(text()) }
         }
     }
+
+val <T : TextView> T.isNotBlank
+    get() = textChange.delegate(fromValue = { text.isNotBlank() })
+
+val <T : TextView> T.isBlank
+    get() = textChange.delegate(fromValue = { text.isBlank() })
 
 inline fun <T : TextView> T.onTextChange(
     crossinline onChange: (view: T) -> Unit
