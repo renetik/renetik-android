@@ -1,6 +1,7 @@
 package renetik.android.core.lang.result
 
 import kotlinx.coroutines.CancellationException
+import renetik.android.core.kotlin.exception
 import renetik.android.core.lang.result.CSResult.State.Cancel
 import renetik.android.core.lang.result.CSResult.State.Failure
 import renetik.android.core.lang.result.CSResult.State.Success
@@ -100,9 +101,9 @@ data class CSResult<Value>(
         )
 
         fun <Value> failure(message: String): CSResult<Value> =
-            CSResult(Failure, message = message)
+            CSResult(Failure, throwable = exception(message), message = message)
 
         fun <Value> failure(code: Int, message: String? = null): CSResult<Value> =
-            CSResult(Failure, code = code, message = message)
+            CSResult(Failure, throwable = exception(message), code = code, message = message)
     }
 }
