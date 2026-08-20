@@ -96,7 +96,7 @@ data class CSResult<Value>(
             throwable: Throwable? = null,
             message: String? = null, code: Int? = null
         ) = CSResult<Value>(
-            Failure, throwable = throwable,
+            Failure, throwable = throwable ?: exception(message),
             message = message, code = code
         )
 
