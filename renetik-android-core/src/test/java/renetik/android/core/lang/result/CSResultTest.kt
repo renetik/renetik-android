@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
@@ -63,6 +64,15 @@ class CSResultTest {
         assertTrue(failure.isFailure)
         assertEquals(404, failure.code)
         assertEquals("missing", failure.message)
+        assertNotNull(failure.throwable)
+    }
+
+    @Test
+    fun failureFactoriesAlwaysProvideAThrowable() {
+        assertNotNull(CSResult.failure.throwable)
+        assertNotNull(CSResult.failure<String>().throwable)
+        assertNotNull(CSResult.failure<String>("failed").throwable)
+        assertNotNull(CSResult.failure<String>(404).throwable)
     }
 
     @Test

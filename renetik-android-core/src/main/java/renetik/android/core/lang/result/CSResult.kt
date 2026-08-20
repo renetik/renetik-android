@@ -11,7 +11,7 @@ data class CSResult<Value>(
     val state: State,
     val value: Value? = null,
     var throwable: Throwable? = null,
-    val message: String? = null,
+    var message: String? = null,
     val code: Int? = null,
 ) {
     enum class State { Success, Cancel, Failure; }
@@ -84,9 +84,12 @@ data class CSResult<Value>(
         if (isCancel) dispatcher { function() }
     }
 
+    fun ifFailureMessage(message: String) =
+        if (isFailure) failure(throwable, message, code = code) else this
+
     companion object {
         val success: CSResult<Unit> = CSResult(Success, Unit)
-        val failure: CSResult<Unit> = CSResult(Failure, Unit)
+        val failure: CSResult<Unit> = CSResult(Failure, Unit, throwable = exception())
         val cancel: CSResult<Unit> = CSResult(Cancel, Unit)
 
         fun <Value> success(value: Value) = CSResult(Success, value)
