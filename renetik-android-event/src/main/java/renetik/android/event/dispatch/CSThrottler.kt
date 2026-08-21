@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.withTimeoutOrNull
+import renetik.android.core.kotlin.throwCancellation
 import renetik.android.core.logging.CSLog.logError
 import renetik.android.event.registration.CSHasRegistrations
 import kotlin.coroutines.CoroutineContext
@@ -83,7 +84,8 @@ class CSThrottler<T>(
                     break
                 }
                 if (after == ZERO) {
-                    runCatching { action(param) }.onFailure(::logError)
+                    runCatching { action(param) }
+                        .throwCancellation().onFailure(::logError)
                     continue
                 }
                 val mark = clock.markNow()
@@ -93,7 +95,8 @@ class CSThrottler<T>(
                     val timeoutMs = remaining.inWholeMilliseconds.coerceAtLeast(1L)
                     param = withTimeoutOrNull(timeoutMs) { channel.receive() } ?: break
                 }
-                runCatching { action(param) }.onFailure(::logError)
+                runCatching { action(param) }
+                    .throwCancellation().onFailure(::logError)
             }
         }
     }

@@ -14,6 +14,7 @@ import renetik.android.core.java.io.readString
 import renetik.android.core.java.io.writeAtomic
 import renetik.android.core.kotlin.changeIf
 import renetik.android.core.kotlin.collections.reload
+import renetik.android.core.kotlin.throwCancellation
 import renetik.android.core.lang.CSEnvironment.isDebug
 import renetik.android.core.lang.value.isFalse
 import renetik.android.core.lang.variable.setFalse
@@ -127,7 +128,7 @@ class CSFileJsonStore(
                     (!saveChannel.isEmpty || isWriteFinished.isFalse)) {
                     saveData().onFailure(::onFailure)
                 } else onFailure(it)
-            }
+            }.throwCancellation()
         }
     }
 

@@ -1,6 +1,7 @@
 package renetik.android.event
 
 import renetik.android.core.kotlin.primitives.isTrue
+import renetik.android.core.kotlin.throwCancellation
 import renetik.android.core.logging.CSLog.logError
 import renetik.android.core.logging.CSLog.logErrorTrace
 import renetik.android.event.change.CSHasChange
@@ -41,7 +42,8 @@ class CSSuspendEvent<T> : CSHasChange<T> {
         try {
             listeners.forEach { listener ->
                 if (listener.isActive)
-                    runCatching { listener(argument) }.onFailure(::logError)
+                    runCatching { listener(argument) }
+                        .throwCancellation().onFailure(::logError)
             }
         } finally {
             firing.set(false)
@@ -78,4 +80,3 @@ class CSSuspendEvent<T> : CSHasChange<T> {
         override fun toString() = "${super.toString()} listener:${listener::class}"
     }
 }
-
