@@ -1,8 +1,12 @@
 package renetik.android.core.lang.result
 
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -88,13 +92,65 @@ class CSResultTest {
     }
 
     @Test
-    fun cancellationExceptionBecomesCancelResult() = runTest {
-        val result = CSResult.success("value").ifSuccess {
-            throw CancellationException("stop")
+    fun cancellationExceptionPropagatesFromIfSuccess() = runTest {
+        val cancellation = CancellationException("stop")
+
+        val thrown = runCatching {
+            CSResult.success("value").ifSuccess { throw cancellation }
+        }.exceptionOrNull()
+
+        assertSame(cancellation, thrown)
+    }
+
+    @Test
+    fun cancellationExceptionPropagatesFromIfSuccessReturn() = runTest {
+        val cancellation = CancellationException("stop")
+
+        val thrown = runCatching {
+            CSResult.success("value").ifSuccessReturn<Unit> { throw cancellation }
+        }.exceptionOrNull()
+
+        assertSame(cancellation, thrown)
+    }
+
+    @Test
+    fun explicitCancelPassesThroughSuccessCallbacks() = runTest {
+        val cancel = CSResult.cancel<String>()
+        var callbackCalls = 0
+
+        val same = cancel.ifSuccess { callbackCalls++ }
+        val mapped = cancel.ifSuccessReturn {
+            callbackCalls++
+            CSResult.success(it.length)
         }
 
-        assertTrue(result.isCancel)
-        assertFalse(result.isSuccess)
+        assertSame(cancel, same)
+        assertTrue(mapped.isCancel)
+        assertEquals(0, callbackCalls)
+    }
+
+    @Test
+    fun cancelledChainRunsFinallyWithoutContinuing() = runTest {
+        val started = CompletableDeferred<Unit>()
+        var finallyCalled = false
+        var continuedAfterChain = false
+        val job = launch {
+            try {
+                CSResult.success(Unit).ifSuccess {
+                    started.complete(Unit)
+                    awaitCancellation()
+                }
+            } finally {
+                finallyCalled = true
+            }
+            continuedAfterChain = true
+        }
+
+        started.await()
+        job.cancelAndJoin()
+
+        assertTrue(finallyCalled)
+        assertFalse(continuedAfterChain)
     }
 
     @Test

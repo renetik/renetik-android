@@ -1,12 +1,16 @@
 package renetik.android.core.lang.result
 
-import kotlinx.coroutines.CancellationException
 import renetik.android.core.kotlin.exception
+import renetik.android.core.kotlin.throwCancellation
 import renetik.android.core.lang.result.CSResult.State.Cancel
 import renetik.android.core.lang.result.CSResult.State.Failure
 import renetik.android.core.lang.result.CSResult.State.Success
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * An operation result whose [State.Cancel] is a domain outcome returned while the caller remains
+ * active. Coroutine cancellation is control flow and propagates instead of becoming a result.
+ */
 data class CSResult<Value>(
     val state: State,
     val value: Value? = null,
@@ -30,9 +34,7 @@ data class CSResult<Value>(
     ): CSResult<Value> =
         if (isSuccess) runCatching {
             dispatcher { function(value!!); this }
-        }.getOrElse {
-            if (it is CancellationException) cancel() else failure(it)
-        }
+        }.throwCancellation().getOrFailResult()
         else this
 
     suspend inline fun <T> ifSuccessReturn(
@@ -45,9 +47,7 @@ data class CSResult<Value>(
     ): CSResult<T> =
         if (isSuccess) runCatching {
             dispatcher { function(value!!) }
-        }.getOrElse {
-            if (it is CancellationException) cancel() else failure(it)
-        }
+        }.throwCancellation().getOrFailResult()
         else CSResult(state, throwable = throwable,
             message = message, code = code)
 
