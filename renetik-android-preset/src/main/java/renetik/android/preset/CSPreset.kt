@@ -14,7 +14,6 @@ import renetik.android.event.lifecycle.CSHasDestruct
 import renetik.android.event.lifecycle.CSModel
 import renetik.android.event.property.CSProperty.Companion.property
 import renetik.android.event.registration.plus
-import renetik.android.preset.property
 import renetik.android.preset.property.CSPresetKeyData
 import renetik.android.store.CSStore
 import renetik.android.store.type.CSJsonObjectStore.Companion.CSJsonObjectStore
@@ -37,6 +36,8 @@ class CSPreset<PresetListItem : CSPresetItem,
         ).also { preset ->
             parentPreset.add(preset)
         }
+
+        const val PresetTitleKey = "preset title"
     }
 
     val id = "$key preset"
@@ -53,7 +54,7 @@ class CSPreset<PresetListItem : CSPresetItem,
 
     val store = CSPresetStore(this)
     val listItem = CSPresetListItem(this, notFoundItem, defaultItemId)
-    val title = property(this, "preset title", getDefault = { listItem.value.title.value })
+    val title = property(this, PresetTitleKey, getDefault = { listItem.value.title.value })
         .trackModified()
     val itemTitle = listItem.delegate(this, fromValueChild = { it.title })
 

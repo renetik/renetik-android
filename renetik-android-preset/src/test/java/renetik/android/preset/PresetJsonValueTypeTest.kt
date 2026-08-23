@@ -9,6 +9,7 @@ import renetik.android.core.base.CSTestApplication
 import renetik.android.core.kotlin.collections.first
 import renetik.android.event.lifecycle.CSModel
 import renetik.android.preset.CSPreset.Companion.CSPreset
+import renetik.android.preset.CSPreset.Companion.PresetTitleKey
 import renetik.android.preset.model.NotFoundPresetItem
 import renetik.android.preset.model.TestCSPresetItemList
 import renetik.android.preset.model.defaultCategory
@@ -31,7 +32,7 @@ class PresetJsonValueTypeTest {
         val stereo by preset.property(parent, "stereo", default = false)
         val mono by preset.property(parent, "mono", default = true)
         val threshold by preset.property(parent, "threshold", default = 0f)
-        val title by preset.property(parent, "preset title", default = "")
+        val title by preset.property(parent, PresetTitleKey, default = "")
     }
 
     private fun loadPropertiesFrom(presetItemJson: String): Properties {
