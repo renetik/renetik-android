@@ -28,7 +28,10 @@ import renetik.android.preset.model.TestCSPresetItemList
 import renetik.android.preset.model.manageItems
 import renetik.android.store.context.CSHasStoreContext
 import renetik.android.store.context.CSHasStoreContext.Companion.destructClear
+import renetik.android.store.context.property
+import renetik.android.store.dataProperty
 import renetik.android.store.type.CSFileJsonStore.Companion.CSFileJsonStore
+import renetik.android.store.type.CSJsonObjectStore
 import renetik.android.testing.CSAssert.assert
 import renetik.android.testing.CSAssert.assertContains
 import renetik.android.testing.CSAssert.assertContainsNot
@@ -38,6 +41,10 @@ import kotlin.time.Duration.Companion.seconds
 @RunWith(RobolectricTestRunner::class)
 @Config(application = CSTestApplication::class)
 class CSPresetCSStoreContextTest {
+
+    class JsonValue : CSJsonObjectStore() {
+        var text: String by dataProperty("text", "")
+    }
 
     @Before
     fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -118,5 +125,16 @@ class CSPresetCSStoreContextTest {
         assert(expected = 10, propertyValue)
         checkStoreFor(""""preset1 preset store":{}""")
         checkStoreForNot("""{"contextKey property":10}""")
+    }
+
+    @Test
+    fun jsonObjectProperty() = runTest {
+        val property = storeParent.store.property<JsonValue>("property")
+
+        assertEquals("", property.value.text)
+        property.value = JsonValue().apply { text = "value" }
+
+        assertEquals("value", property.value.text)
+        checkStoreFor("""{"contextKey property":{"text":"value"}}""")
     }
 }

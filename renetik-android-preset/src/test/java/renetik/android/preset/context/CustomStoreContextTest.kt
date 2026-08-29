@@ -10,11 +10,17 @@ import renetik.android.event.lifecycle.CSModel
 import renetik.android.json.toJson
 import renetik.android.store.context.CSHasStoreContext
 import renetik.android.store.context.CSHasStoreContext.Companion.destructClear
+import renetik.android.store.context.property
+import renetik.android.store.dataProperty
 import renetik.android.store.type.CSJsonObjectStore
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE, application = CSTestApplication::class)
 class CustomStoreContextTest {
+    class JsonValue : CSJsonObjectStore() {
+        var text: String by dataProperty("text", "")
+    }
+
     private val parent = CSModel()
     private val jsonStore = CSJsonObjectStore()
     private val storeParent = object : CSModel(parent), CSHasStoreContext {
@@ -39,5 +45,16 @@ class CustomStoreContextTest {
         assertEquals("""{"context property":10}""", jsonStore.toJson())
         storeParent.destructClear()
         assertEquals("""{}""", jsonStore.toJson())
+    }
+
+    @Test
+    fun jsonObjectProperty() {
+        val property = storeParent.store.property<JsonValue>("property")
+
+        assertEquals("", property.value.text)
+        property.value = JsonValue().apply { text = "value" }
+
+        assertEquals("value", property.value.text)
+        assertEquals("""{"context property":{"text":"value"}}""", jsonStore.toJson())
     }
 }

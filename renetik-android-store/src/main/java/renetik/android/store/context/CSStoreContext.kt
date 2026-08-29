@@ -7,6 +7,8 @@ import renetik.android.event.lifecycle.CSHasDestruct
 import renetik.android.event.lifecycle.CSHasRegistrationsHasDestruct
 import renetik.android.json.obj.CSJsonObjectInterface
 import renetik.android.store.property.CSStoreProperty
+import renetik.android.store.type.CSJsonObjectStore
+import kotlin.reflect.KClass
 
 interface CSStoreContext
     : CSHasRegistrationsHasDestruct, CSHasId, CSHasChange<Unit> {
@@ -78,4 +80,8 @@ interface CSStoreContext
         key: String, values: List<T>,
         default: List<T> = emptyList(), onChange: ArgFun<List<T>>? = null
     ): CSStoreProperty<List<T>>
+
+    fun <T : CSJsonObjectStore> property(
+        key: String, type: KClass<T>, onChange: ArgFun<T>? = null
+    ): CSStoreProperty<T>
 }

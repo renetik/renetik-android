@@ -30,6 +30,8 @@ import renetik.android.preset.property.value.CSListItemValuePresetProperty
 import renetik.android.preset.property.value.CSStringValuePresetProperty
 import renetik.android.store.context.CSStoreContext
 import renetik.android.store.operation
+import renetik.android.store.type.CSJsonObjectStore
+import kotlin.reflect.KClass
 
 class PresetStoreContext(
     parent: CSHasDestruct,
@@ -181,4 +183,9 @@ class PresetStoreContext(
     ): CSHasIdListValuePresetProperty<T> = add(key, preset.property(
         this, storeKey(key), values, default, onChange
     ))
+
+    override fun <T : CSJsonObjectStore> property(
+        key: String, type: KClass<T>, onChange: ArgFun<T>?
+    ): CSPresetProperty<T> =
+        add(key, preset.property(this, storeKey(key), type, onChange))
 }

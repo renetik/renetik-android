@@ -4,7 +4,6 @@ package renetik.android.store
 
 import renetik.android.core.logging.CSLog.logError
 import renetik.android.json.parseJsonMap
-import renetik.android.store.CSStore
 
 inline fun <T : CSStore> T.load(store: CSStore, key: String) = apply {
     store.data[key]?.also {
@@ -24,6 +23,9 @@ inline fun <T : CSStore, R> T.operation(func: (T) -> R) {
     if (!startOperation()) {
         func(this); return
     }
-    func(this)
-    stopOperation()
+    try {
+        func(this)
+    } finally {
+        stopOperation()
+    }
 }

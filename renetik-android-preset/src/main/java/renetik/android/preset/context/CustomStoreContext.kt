@@ -22,6 +22,8 @@ import renetik.android.store.property.CSStoreProperty
 import renetik.android.store.property.listenLoad
 import renetik.android.store.property.value.CSHasIdListValueStoreProperty
 import renetik.android.store.property.value.CSIntListValueStoreProperty
+import renetik.android.store.type.CSJsonObjectStore
+import kotlin.reflect.KClass
 
 class CustomStoreContext(
     parent: CSHasDestruct? = null,
@@ -29,7 +31,8 @@ class CustomStoreContext(
     private val hasId: CSHasId? = null,
     override val key: String? = null,
 ) : CSModel(parent), CSStoreContext {
-    override val id = hasId?.id?.let { id -> key?.let { "$id $it" } ?: id } ?: key ?: ""
+    override val id = hasId?.id
+        ?.let { id -> key?.let { "$id $it" } ?: id } ?: key ?: ""
     override val data: CSJsonObjectInterface = store
     private val childContexts = mutableListOf<CSStoreContext>()
     private val properties = mutableListOf<CSStoreProperty<*>>()
@@ -95,7 +98,8 @@ class CustomStoreContext(
     ) = add(store.property(this, storeKey(key), default, onChange))
 
     override fun <T> property(
-        key: String, values: () -> Collection<T>, default: () -> T, onChange: ArgFun<T>?
+        key: String, values: () -> Collection<T>,
+        default: () -> T, onChange: ArgFun<T>?
     ) = add(store.property(this, storeKey(key), values, default, onChange))
 
     override fun nullIntProperty(
@@ -116,17 +120,23 @@ class CustomStoreContext(
 
     override fun <T> nullListItemProperty(
         key: String, values: List<T>, default: T?, onChange: ((value: T?) -> Unit)?
-    ) = add(store.nullListItemProperty(storeKey(key), values, default, onChange)
-        .parent(this).listenLoad())
+    ) = add(store.nullListItemProperty(storeKey(key), values,
+        default, onChange).parent(this).listenLoad())
 
     override fun property(
         key: String, default: List<Int>, onChange: ArgFun<List<Int>>?
-    ) = add(CSIntListValueStoreProperty(store, storeKey(key), default, onChange)
-        .parent(this).listenLoad())
+    ) = add(CSIntListValueStoreProperty(store, storeKey(key),
+        default, onChange).parent(this).listenLoad())
 
     override fun <T : CSHasId> property(
         key: String, values: List<T>,
         default: List<T>, onChange: ArgFun<List<T>>?
-    ) = add(CSHasIdListValueStoreProperty(store, storeKey(key), default, onChange = onChange)
-        .parent(this).listenLoad())
+    ) = add(CSHasIdListValueStoreProperty(store, storeKey(key),
+        default, onChange = onChange).parent(this).listenLoad())
+
+    override fun <T : CSJsonObjectStore> property(
+        key: String, type: KClass<T>,
+        onChange: ArgFun<T>?
+    ): CSStoreProperty<T> =
+        add(store.property(this, storeKey(key), type, onChange))
 }
