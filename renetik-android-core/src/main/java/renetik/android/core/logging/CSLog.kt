@@ -92,7 +92,7 @@ object CSLog {
     }
 
     @AnyThread @JvmStatic
-    inline fun logInfo(throwable: Throwable, message: String) {
+    inline fun logInfo(throwable: Throwable?, message: String?) {
         if (logger.isEnabled(Info)) printLog(Info, throwable, message)
     }
 
