@@ -19,6 +19,11 @@ fun CSView<*>.snackError(
 ) = onMain { view.snackError(this, text, time, CSAction(title, onClick)) }
 
 fun CSView<*>.snackError(
+    text: Int, time: Duration? = null,
+    action: CSAction? = null
+) = onMain { view.snackError(this, getString(text), time, action) }
+
+fun CSView<*>.snackError(
     text: String, time: Duration? = null,
     action: CSAction? = null
 ) = onMain { view.snackError(this, text, time, action) }

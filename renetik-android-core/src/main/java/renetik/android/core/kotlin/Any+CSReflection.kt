@@ -11,8 +11,11 @@ fun <T> Any.privateField(name: String): T? = runCatching {
     return field.get(this) as T
 }.onFailure(::logWarn).getOrNull()
 
-fun <T> Any.setPrivateField(name: String, fieldValue: T) = runCatching {
-    val field = this::class.java.getDeclaredField(name)
+fun <T> Any.setPrivateField(name: String, fieldValue: T) =
+    setPrivateField(this.kClass, name, fieldValue)
+
+fun <V : Any, T> V.setPrivateField(type: KClass<V>, name: String, fieldValue: T) = runCatching {
+    val field = type.java.getDeclaredField(name)
     field.isAccessible = true
     field.set(this, fieldValue)
 }.onFailure(::logWarn)
