@@ -13,7 +13,6 @@ import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.bumptech.glide.signature.ObjectKey
-import renetik.android.core.kotlin.changeIf
 import renetik.android.core.kotlin.changeIfNotNull
 import renetik.android.event.change.CSHasChangeValue
 import renetik.android.event.change.action
@@ -21,7 +20,6 @@ import renetik.android.event.property.CSProperty
 import renetik.android.event.registration.CSHasRegistrations
 import renetik.android.event.registration.CSRegistration
 import renetik.android.ui.view.onHasSize
-import renetik.android.ui.widget.image
 import java.io.File
 
 val instance = CSGlideImaging()
@@ -59,23 +57,16 @@ fun <T> ImageView.imageGlide(property: CSHasChangeValue<T>, file: (T) -> File)
         : CSRegistration = property.action { imageGlide(file(property.value)) }
 
 fun <T : ImageView> T.imageGlide(
-    url: String, progressView: View? = null,
+    url: String?, progressView: View? = null,
     errorDrawable: Int? = null,
     transformation: Transformation<Bitmap>? = null
 ) {
     setImageDrawable(null)
-    Glide.with(this).load(url).fitCenter()
-        .changeIfNotNull(progressView) {
-            addListener(CSGlideProgressListener(it,
-                onFailed = { image(errorDrawable) }))
-        }
-        .changeIf(progressView == null) {
-            addListener(DrawableRequestAdapter(
-                onFailed = { image(errorDrawable) }))
-        }
-        .changeIfNotNull(transformation) {
-            apply(bitmapTransform(it))
-        }.into(this)
+    Glide.with(this).load(url)
+        .changeIfNotNull(errorDrawable) { error(it).fallback(it) }
+        .changeIfNotNull(progressView) { addListener(CSGlideProgressListener(it)) }
+        .changeIfNotNull(transformation) { apply(bitmapTransform(it)) }
+        .into(this)
 }
 
 fun <T : ImageView> T.imageGlide(parent: CSHasRegistrations, file: File)

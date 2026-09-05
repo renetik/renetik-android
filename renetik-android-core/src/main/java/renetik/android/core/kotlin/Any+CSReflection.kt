@@ -1,7 +1,6 @@
 package renetik.android.core.kotlin
 
 import renetik.android.core.java.lang.createInstance
-import renetik.android.core.logging.CSLog.logWarn
 import kotlin.reflect.KClass
 
 fun <T> Any.privateField(name: String): T? = runCatching {
@@ -9,7 +8,7 @@ fun <T> Any.privateField(name: String): T? = runCatching {
     field.isAccessible = true
     @Suppress("UNCHECKED_CAST")
     return field.get(this) as T
-}.onFailure(::logWarn).getOrNull()
+}.logError().getOrNull()
 
 fun <T> Any.setPrivateField(name: String, fieldValue: T) =
     setPrivateField(this.kClass, name, fieldValue)
@@ -18,18 +17,18 @@ fun <V : Any, T> V.setPrivateField(type: KClass<V>, name: String, fieldValue: T)
     val field = type.java.getDeclaredField(name)
     field.isAccessible = true
     field.set(this, fieldValue)
-}.onFailure(::logWarn)
+}.logError()
 
 fun setStaticField(type: KClass<*>, name: String, value: Any?) = runCatching {
     val field = type.java.getDeclaredField(name)
     field.isAccessible = true
     field.set(null, value)
-}.onFailure(::logWarn)
+}.logError()
 
 @Suppress("UNCHECKED_CAST")
 fun <T> createClass(className: String): Class<T>? = runCatching {
     Class.forName(className) as? Class<T>
-}.onFailure(::logWarn).getOrNull()
+}.logError().getOrNull()
 
 fun classExist(name: String): Boolean = runCatching {
     val loader = Thread.currentThread().contextClassLoader
