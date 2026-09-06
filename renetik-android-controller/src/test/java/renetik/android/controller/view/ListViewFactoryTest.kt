@@ -40,7 +40,7 @@ class ListViewFactoryTest {
         buildActivity(Activity::class.java).setup()
     }
     private val parent: CSActivityView<FrameLayout> by lazy {
-        activityController.get().activityView!!
+        activityController.get().activityView
     }
 
     private fun itemView() = CSView(parent, View(parent.view.context))

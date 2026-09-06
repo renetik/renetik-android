@@ -39,7 +39,7 @@ class CSNavigationViewTest {
         buildActivity(Activity::class.java).setup()
     }
     private val navigation: CSNavigationView by lazy {
-        activityController.get().activityView?.navigation!!
+        activityController.get().activityView.navigation!!
     }
 
     @Test

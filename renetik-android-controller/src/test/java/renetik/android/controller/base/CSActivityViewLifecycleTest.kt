@@ -34,7 +34,7 @@ class CSActivityViewLifecycleTest {
         buildActivity(Activity::class.java).setup()
     }
     private val activityView: CSActivityView<FrameLayout> by lazy {
-        activityController.get().activityView!!
+        activityController.get().activityView
     }
 
     @Test
