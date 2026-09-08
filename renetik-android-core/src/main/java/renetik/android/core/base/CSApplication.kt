@@ -11,6 +11,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import renetik.android.core.android.content.CSToast.toast
 import renetik.android.core.kotlin.className
 import renetik.android.core.kotlin.findCause
@@ -116,6 +117,8 @@ abstract class CSApplication<ActivityType : AppCompatActivity> : Application(),
     }
 
     override fun onTerminate() {
+        // Fix Robolectric test issues by cancelling scope.
+        scope.cancel()
         super.onTerminate()
         logInfo { "onTerminate" }
     }
