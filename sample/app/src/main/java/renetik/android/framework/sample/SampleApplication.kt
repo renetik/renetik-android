@@ -2,7 +2,7 @@ package renetik.android.framework.sample
 
 import renetik.android.core.base.CSApplication
 
-class SampleApplication : CSApplication<MainActivity>() {
+open class SampleApplication : CSApplication<MainActivity>() {
     override val activityClass = MainActivity::class
 
     override fun onCreate() {

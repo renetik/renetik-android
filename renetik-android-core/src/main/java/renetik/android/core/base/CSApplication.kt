@@ -11,7 +11,6 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import renetik.android.core.android.content.CSToast.toast
 import renetik.android.core.kotlin.className
 import renetik.android.core.kotlin.findCause
@@ -20,6 +19,7 @@ import renetik.android.core.lang.CSEnvironment
 import renetik.android.core.lang.CSLang.ExitStatus.Error
 import renetik.android.core.lang.CSLang.ExitStatus.OK
 import renetik.android.core.lang.CSLang.exit
+import renetik.android.core.lang.result.createSupervisorChild
 import renetik.android.core.lang.result.named
 import renetik.android.core.lang.variable.CSWeakVariable.Companion.weak
 import renetik.android.core.logging.CSLog.logError
@@ -47,6 +47,9 @@ abstract class CSApplication<ActivityType : AppCompatActivity> : Application(),
     }
 
     val scope = MainScope()
+    var mainScope = createMainScope()
+    protected fun createMainScope() = scope.createSupervisorChild()
+
     private val cores = getRuntime().availableProcessors()
     val Default = Dispatchers.Default.limitedParallelism(max(1, cores - 1))
         .named("$className Default")
@@ -82,8 +85,8 @@ abstract class CSApplication<ActivityType : AppCompatActivity> : Application(),
     }
 
     private fun Throwable.isNotAttachedError(): Boolean = findCause {
-        (it is IllegalArgumentException && message?.contains("not attached to window manager").isTrue)
-                || (it is WindowManager.BadTokenException)
+        (it is IllegalArgumentException && message?.contains(
+            "not attached to window manager").isTrue) || (it is WindowManager.BadTokenException)
     }
 
     private fun Throwable.isIncrementalInstallMissingResource(): Boolean = findCause {
@@ -117,8 +120,6 @@ abstract class CSApplication<ActivityType : AppCompatActivity> : Application(),
     }
 
     override fun onTerminate() {
-        // Fix Robolectric test issues by cancelling scope.
-        scope.cancel()
         super.onTerminate()
         logInfo { "onTerminate" }
     }
@@ -131,7 +132,8 @@ abstract class CSApplication<ActivityType : AppCompatActivity> : Application(),
     final override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         if (!activityClass.isInstance(activity)) return
         if (this.activity?.isDestroyed == false || this.activity?.isFinishing == false)
-            logError("activity should be destroyed or null, " + "when new is created, in single activity application")
+            logError("activity should be destroyed or null, " +
+                    "when new is created, in single activity application")
         @Suppress("UNCHECKED_CAST") (activity as ActivityType)
             .also { this.activity = it; onActivityCreated(it) }
     }

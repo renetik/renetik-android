@@ -19,7 +19,7 @@ import renetik.android.testing.context
 import renetik.android.ui.picker.CSNumberPicker
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = SampleApplication::class)
+@Config(application = SampleTestApplication::class)
 class ChecklistTest {
 
     @Test

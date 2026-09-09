@@ -12,8 +12,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import renetik.android.core.base.CSApplication.Companion.app
 import renetik.android.core.kotlin.className
-import renetik.android.core.lang.result.mainScope
 import renetik.android.core.lang.variable.CSWeakVariable.Companion.weak
 import renetik.android.core.logging.CSLog.logError
 import renetik.android.event.registration.CSRegistrationImpl
@@ -56,7 +56,7 @@ fun CoroutineContext.launch(
 
 fun CoroutineContext.launch(
     name: String? = null, func: suspend (JobRegistration) -> Unit,
-): JobRegistration = launch(mainScope, name, func)
+): JobRegistration = launch(app.mainScope, name, func)
 
 fun CoroutineContext.launch(
     name: String? = null, after: Duration,

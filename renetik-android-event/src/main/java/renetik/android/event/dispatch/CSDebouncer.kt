@@ -6,8 +6,8 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import renetik.android.core.base.CSApplication.Companion.app
 import renetik.android.core.lang.CSFunc
-import renetik.android.core.lang.result.mainScope
 import renetik.android.event.registration.CSHasRegistrations
 import renetik.android.event.registration.onCancel
 import kotlin.coroutines.CoroutineContext
@@ -37,20 +37,20 @@ class CSDebouncer(
     companion object {
         fun CSHasRegistrations.debouncer(
             after: Duration, function: suspend () -> Unit
-        ) = CSDebouncer(this, mainScope, Main, function, after)
+        ) = CSDebouncer(this, app.mainScope, Main, function, after)
 
         fun CSHasRegistrations.debouncer(
             dispatcher: CoroutineContext = Main,
             after: Duration, function: suspend () -> Unit
-        ) = CSDebouncer(this, mainScope, dispatcher, function, after)
+        ) = CSDebouncer(this, app.mainScope, dispatcher, function, after)
 
         fun CSHasRegistrations.debouncer(
             dispatcher: CoroutineContext = Main, function: suspend () -> Unit
-        ) = CSDebouncer(this, mainScope, dispatcher, function)
+        ) = CSDebouncer(this, app.mainScope, dispatcher, function)
 
         fun CSHasRegistrations.debouncer(
             function: suspend () -> Unit
-        ) = CSDebouncer(this, mainScope, Main, function)
+        ) = CSDebouncer(this, app.mainScope, Main, function)
 
         fun CSHasRegistrations.debouncer(
             scope: CoroutineScope,

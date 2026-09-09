@@ -6,16 +6,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.job
 import kotlinx.coroutines.withTimeoutOrNull
-import renetik.android.core.base.CSApplication.Companion.app
 import renetik.android.core.lang.CSEnvironment.isCoroutinesDebug
 import renetik.android.core.logging.CSLog.logInfo
 import renetik.android.core.logging.CSLog.logWarn
 import java.util.concurrent.CancellationException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-
-var mainScope: CoroutineScope = createMainScope()
-fun createMainScope() = app.scope.createSupervisorChild()
 
 fun CoroutineScope.createSupervisorChild() = CoroutineScope(coroutineContext +
         SupervisorJob(parent = coroutineContext.job))
