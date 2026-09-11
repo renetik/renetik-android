@@ -7,6 +7,7 @@ import androidx.annotation.IdRes
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import renetik.android.core.lang.Fun
 
 val CSActivityView<*>.intent: Intent get() = activity().intent
@@ -36,8 +37,7 @@ fun View.asActivityView() = (this.tag as? CSActivityView<*>)
 fun CSActivityView<*>.enterFullScreen() {
     WindowCompat.setDecorFitsSystemWindows(activity().window, false)
     val controller = WindowInsetsControllerCompat(activity().window, view)
-    controller.systemBarsBehavior =
-        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    controller.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     controller.hide(WindowInsetsCompat.Type.systemBars())
 }
 
