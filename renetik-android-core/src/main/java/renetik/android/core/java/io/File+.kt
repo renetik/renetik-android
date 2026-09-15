@@ -5,7 +5,7 @@ import renetik.android.core.java.util.format
 import renetik.android.core.java.util.now
 import renetik.android.core.logging.CSLog.logDebug
 import renetik.android.core.logging.CSLog.logError
-import renetik.android.core.logging.CSLog.logWarn
+import renetik.android.core.kotlin.logWarn
 import java.io.File
 import java.io.File.createTempFile
 import java.nio.file.AtomicMoveNotSupportedException
@@ -121,7 +121,7 @@ fun File.atomicMove(output: File): Boolean {
             Files.move(path, output.toPath(), REPLACE_EXISTING)
             return true
         }
-    }.onFailure(::logWarn)
+    }.logWarn()
     return false
 }
 
@@ -131,7 +131,7 @@ fun File.copy(output: File): Boolean {
     runCatching {
         Files.copy(path, output.toPath(), REPLACE_EXISTING)
         return true
-    }.onFailure(::logWarn)
+    }.logWarn()
     return false
 }
 

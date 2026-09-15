@@ -14,7 +14,7 @@ import android.net.Uri
 import android.os.Environment.getExternalStorageDirectory
 import androidx.core.net.toUri
 import renetik.android.controller.base.CSActivityView
-import renetik.android.core.logging.CSLog.logError
+import renetik.android.core.kotlin.logError
 import java.io.File
 
 fun <T : CSActivityView<*>> T.sendMail(email: String, subject: String, text: String) {
@@ -43,7 +43,7 @@ fun <T : CSActivityView<*>> T.sendMail(
         if (attachments.isNotEmpty()) putParcelableArrayListExtra(EXTRA_STREAM, attachmentUris)
         runCatching {
             startActivity(createChooser(this, "Pick an Email provider"))
-        }.onFailure(::logError)
+        }.logError()
     }
 }
 
@@ -79,5 +79,5 @@ fun CSActivityView<*>.sendMail(
     }
     runCatching {
         startActivity(createChooser(intent, pickerTitle))
-    }.onFailure(::logError)
+    }.logError()
 }

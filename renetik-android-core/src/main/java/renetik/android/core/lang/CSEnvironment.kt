@@ -15,6 +15,7 @@ import renetik.android.core.kotlin.classExist
 import renetik.android.core.kotlin.createClass
 import renetik.android.core.kotlin.invoke
 import renetik.android.core.lang.lazy.CSLazyVar.Companion.lazyVar
+import renetik.android.core.kotlin.logWarn
 import renetik.android.core.logging.CSLog.logWarn
 
 object CSEnvironment {
@@ -22,7 +23,7 @@ object CSEnvironment {
         runCatching {
             createClass<Any>("android.app.ActivityThread")
                 ?.invoke("currentApplication") as Application
-        }.onFailure(::logWarn).getOrElse {
+        }.logWarn().getOrElse {
             throw Exception(
                 "Getting Application from ActivityThread failed, " +
                         "consider setting it manually."
@@ -76,5 +77,3 @@ object CSEnvironment {
         }
     }
 }
-
-

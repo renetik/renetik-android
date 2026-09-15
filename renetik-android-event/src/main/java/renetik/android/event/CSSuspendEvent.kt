@@ -1,8 +1,9 @@
 package renetik.android.event
 
+import renetik.android.core.kotlin.finally
+import renetik.android.core.kotlin.logError
 import renetik.android.core.kotlin.primitives.isTrue
 import renetik.android.core.kotlin.throwCancellation
-import renetik.android.core.logging.CSLog.logError
 import renetik.android.core.logging.CSLog.logErrorTrace
 import renetik.android.event.change.CSHasChange
 import renetik.android.event.registration.CSRegistration
@@ -39,15 +40,13 @@ class CSSuspendEvent<T> : CSHasChange<T> {
             logErrorTrace { "Event fired while firing" }
             return
         }
-        try {
+        runCatching {
             listeners.forEach { listener ->
                 if (listener.isActive)
                     runCatching { listener(argument) }
-                        .throwCancellation().onFailure(::logError)
+                        .throwCancellation().logError()
             }
-        } finally {
-            firing.set(false)
-        }
+        }.finally { firing.set(false) }.getOrThrow()
     }
 
     fun clear() = listeners.clear()

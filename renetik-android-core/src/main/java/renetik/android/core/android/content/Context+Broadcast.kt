@@ -8,7 +8,7 @@ import android.content.IntentFilter
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.RECEIVER_EXPORTED
 import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
-import renetik.android.core.logging.CSLog.logWarn
+import renetik.android.core.kotlin.logWarn
 
 inline fun BroadcastReceiver(
     crossinline function: (context: Context, intent: Intent) -> Unit) =
@@ -44,5 +44,5 @@ fun Context.register(
         if (exported) RECEIVER_EXPORTED else RECEIVER_NOT_EXPORTED)
 
 fun Context.unregister(receiver: BroadcastReceiver) {
-    runCatching { unregisterReceiver(receiver) }.onFailure(::logWarn)
+    runCatching { unregisterReceiver(receiver) }.logWarn()
 }

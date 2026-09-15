@@ -14,9 +14,8 @@ inline fun <T> Result<T>.throwCancellation() = apply {
     onFailureOf<CancellationException> { throw it }
 }
 
-inline fun <T> Result<T>.finally(action: () -> Unit): T {
+inline fun <T> Result<T>.finally(action: () -> Unit) = apply {
     action()
-    return getOrThrow()
 }
 
 inline fun <T> Result<T>.logError() = apply { onFailure { logError(it) } }

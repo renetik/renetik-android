@@ -34,7 +34,7 @@ data class CSResult<Value>(
     ): CSResult<Value> =
         if (isSuccess) runCatching {
             dispatcher { function(value!!); this }
-        }.throwCancellation().getOrFailResult()
+        }.throwCancellation().getOrFailure()
         else this
 
     suspend inline fun <T> ifSuccessReturn(
@@ -51,7 +51,7 @@ data class CSResult<Value>(
     ): CSResult<T> =
         if (isSuccess) runCatching {
             dispatcher { function(value!!) }
-        }.throwCancellation().getOrFailResult()
+        }.throwCancellation().getOrFailure()
         else CSResult(state, throwable = throwable,
             message = message, code = code)
 
