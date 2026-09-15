@@ -2,6 +2,7 @@ package renetik.android.core.lang.result
 
 import kotlinx.coroutines.CancellationException
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
@@ -51,7 +52,7 @@ class ResultCancellationTest {
     fun successfulResultReturnsContainedCSResult() {
         val contained = CSResult.success("value")
 
-        val result = Result.success(contained).throwCancellation().getOrFailure()
+        val result = Result.success(contained).getOrFailure()
 
         assertSame(contained, result)
     }
@@ -61,7 +62,6 @@ class ResultCancellationTest {
         val exception = IllegalStateException("boom")
 
         val result = Result.failure<CSResult<String>>(exception)
-            .throwCancellation()
             .getOrFailure("operation failed")
 
         assertTrue(result.isFailure)
@@ -73,9 +73,7 @@ class ResultCancellationTest {
     fun exceptionMessageIsUsedWhenContextIsNotProvided() {
         val exception = IllegalStateException("boom")
 
-        val result = Result.failure<CSResult<String>>(exception)
-            .throwCancellation()
-            .getOrFailure()
+        val result = Result.failure<CSResult<String>>(exception).getOrFailure()
 
         assertTrue(result.isFailure)
         assertSame(exception, result.throwable)
@@ -87,17 +85,33 @@ class ResultCancellationTest {
         val cancellation = CancellationException("stop")
 
         val thrown = assertThrows(CancellationException::class.java) {
-            Result.failure<CSResult<String>>(cancellation).throwCancellation().getOrFailure()
+            Result.failure<CSResult<String>>(cancellation).getOrFailure()
         }
 
         assertSame(cancellation, thrown)
     }
 
     @Test
+    fun cancellationExceptionPropagatesBeforeExceptionMapping() {
+        val cancellation = CancellationException("stop")
+        var mapperCalled = false
+
+        val thrown = assertThrows(CancellationException::class.java) {
+            Result.failure<CSResult<String>>(cancellation).getOrFailure {
+                mapperCalled = true
+                IllegalStateException(it)
+            }
+        }
+
+        assertSame(cancellation, thrown)
+        assertFalse(mapperCalled)
+    }
+
+    @Test
     fun explicitCancelResultIsPreserved() {
         val contained = CSResult.cancel<String>()
 
-        val result = Result.success(contained).throwCancellation().getOrFailure()
+        val result = Result.success(contained).getOrFailure()
 
         assertSame(contained, result)
         assertTrue(result.isCancel)
