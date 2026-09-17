@@ -11,6 +11,7 @@ import renetik.android.store.property.nullable.CSBooleanNullableStoreProperty
 import renetik.android.store.property.nullable.CSDoubleNullableStoreProperty
 import renetik.android.store.property.nullable.CSFloatNullableStoreProperty
 import renetik.android.store.property.nullable.CSIntNullableStoreProperty
+import renetik.android.store.property.nullable.CSLongNullableStoreProperty
 import renetik.android.store.property.nullable.CSStringNullableStoreProperty
 
 fun CSStore.nullStringProperty(
@@ -79,6 +80,19 @@ fun CSStore.nullFloatProperty(
     CSFloatNullableStoreProperty(this, key, default, onChange)
         .parent(parent).listenLoad()
 
+fun CSStore.nullLongProperty(
+    key: String, default: Long? = null,
+    onChange: ArgFun<Long?>? = null,
+): CSStoreProperty<Long?> =
+    CSLongNullableStoreProperty(this, key, default, onChange)
+
+fun CSStore.nullLongProperty(
+    parent: CSHasDestruct,
+    key: String, default: Long? = null,
+    onChange: ArgFun<Long?>? = null,
+): CSStoreProperty<Long?> =
+    CSLongNullableStoreProperty(this, key, default, onChange)
+        .parent(parent).listenLoad()
 
 fun CSStore.nullDoubleProperty(
     parent: CSHasDestruct,

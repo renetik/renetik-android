@@ -15,6 +15,7 @@ import renetik.android.store.nullDoubleProperty
 import renetik.android.store.nullFloatProperty
 import renetik.android.store.nullIntProperty
 import renetik.android.store.nullListItemProperty
+import renetik.android.store.nullLongProperty
 import renetik.android.store.nullStringProperty
 import renetik.android.store.operation
 import renetik.android.store.property
@@ -109,6 +110,10 @@ class CustomStoreContext(
     override fun nullFloatProperty(
         key: String, default: Float?, onChange: ((value: Float?) -> Unit)?
     ) = add(store.nullFloatProperty(this, storeKey(key), default, onChange))
+
+    override fun nullLongProperty(
+        key: String, default: Long?, onChange: ((value: Long?) -> Unit)?
+    ) = add(store.nullLongProperty(this, storeKey(key), default, onChange))
 
     override fun nullDoubleProperty(
         key: String, default: Double?, onChange: ((value: Double?) -> Unit)?

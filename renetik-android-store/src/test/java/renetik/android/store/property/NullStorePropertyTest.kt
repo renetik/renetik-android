@@ -19,6 +19,7 @@ import renetik.android.store.nullFloatProperty
 import renetik.android.store.nullIntProperty
 import renetik.android.store.nullJsonProperty
 import renetik.android.store.nullListItemProperty
+import renetik.android.store.nullLongProperty
 import renetik.android.store.nullStringProperty
 import renetik.android.store.reload
 import renetik.android.store.type.CSJsonObjectStore
@@ -82,6 +83,20 @@ class NullStorePropertyTest {
 
         store.reload(store.toJson())
         val value2: Float? by store.nullFloatProperty("key")
+        assertNull(value2)
+    }
+
+    @Test
+    fun testLongProperty() {
+        var value: Long? by store.nullLongProperty("key", 5L)
+        value = 10L
+        assertEquals("""{"key":10}""", store.toJson())
+        value = null
+        assertEquals("""{}""", store.toJson())
+        assertEquals(5L, value)
+
+        store.reload(store.toJson())
+        val value2: Long? by store.nullLongProperty("key")
         assertNull(value2)
     }
 
