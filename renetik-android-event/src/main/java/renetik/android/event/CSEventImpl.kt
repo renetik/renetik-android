@@ -7,7 +7,7 @@ import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
 import renetik.android.core.kotlin.primitives.isTrue
 import renetik.android.core.lang.CSEnvironment.isDebug
-import renetik.android.core.logging.CSLog.logError
+import renetik.android.core.kotlin.logError
 import renetik.android.core.logging.CSLog.logErrorTrace
 import renetik.android.event.dispatch.onMain
 import renetik.android.event.lifecycle.CSHasDestruct
@@ -55,7 +55,7 @@ class CSEventImpl<T> : CSEvent<T> {
 
     private inline fun CSEventListener<T>.fire(argument: T) {
         if (isDebug) this(argument)
-        else runCatching { this(argument) }.onFailure(::logError)
+        else runCatching { this(argument) }.logError()
     }
 
     @AnyThread

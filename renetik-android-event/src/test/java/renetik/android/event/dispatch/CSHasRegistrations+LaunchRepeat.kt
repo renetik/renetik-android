@@ -14,9 +14,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import renetik.android.core.base.CSApplication.Companion.app
 import renetik.android.core.base.CSTestApplication
-import renetik.android.core.lang.result.createMainScope
-import renetik.android.core.lang.result.mainScope
 import renetik.android.event.lifecycle.CSModel
 import renetik.android.event.lifecycle.destruct
 import renetik.android.testing.CSAssert.assert
@@ -31,14 +30,11 @@ class CSHasRegistrationsLaunchRepeatTest {
     fun setUp() = Dispatchers.setMain(StandardTestDispatcher())
 
     @After
-    fun tearDown() {
-        mainScope = createMainScope()
-        Dispatchers.resetMain()
-    }
+    fun tearDown() = Dispatchers.resetMain()
 
     @Test
     fun launchRepeatStopped() = runTest {
-        mainScope = this
+        app.mainScope = this
         val model = CSModel()
         var count = 0
         val registration = model.launchRepeat(delay = 5, start = false) { count++ }
@@ -60,7 +56,7 @@ class CSHasRegistrationsLaunchRepeatTest {
 
     @Test
     fun launchRepeatStarted() = runTest {
-        mainScope = this
+        app.mainScope = this
         val model = CSModel()
         var count = 0
         val registration = model.launchRepeat(delay = 5, start = true) { count++ }

@@ -5,8 +5,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import renetik.android.core.base.CSApplication.Companion.app
 import renetik.android.core.kotlin.className
-import renetik.android.core.lang.result.mainScope
 import renetik.android.core.lang.variable.CSWeakVariable.Companion.weak
 import renetik.android.event.registration.CSHasRegistrations
 import renetik.android.event.registration.CSRegistration
@@ -48,7 +48,7 @@ fun CSHasRegistrations.launch(
 fun CSHasRegistrations.launch(
     dispatcher: CoroutineContext = Main,
     func: suspend (JobRegistration) -> Unit,
-): JobRegistration = launch(mainScope, dispatcher, func)
+): JobRegistration = launch(app.mainScope, dispatcher, func)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun CSHasRegistrations.launch(

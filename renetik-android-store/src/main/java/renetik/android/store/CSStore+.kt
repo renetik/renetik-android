@@ -2,6 +2,7 @@
 
 package renetik.android.store
 
+import renetik.android.core.kotlin.finally
 import renetik.android.core.logging.CSLog.logError
 import renetik.android.json.parseJsonMap
 
@@ -23,9 +24,5 @@ inline fun <T : CSStore, R> T.operation(func: (T) -> R) {
     if (!startOperation()) {
         func(this); return
     }
-    try {
-        func(this)
-    } finally {
-        stopOperation()
-    }
+    runCatching { func(this) }.finally(::stopOperation).getOrThrow()
 }

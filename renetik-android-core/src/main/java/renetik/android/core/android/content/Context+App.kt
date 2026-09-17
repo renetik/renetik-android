@@ -8,7 +8,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager.NameNotFoundException
 import android.graphics.drawable.Drawable
 import renetik.android.core.kotlin.primitives.isFlagSet
-import renetik.android.core.logging.CSLog.logWarn
+import renetik.android.core.kotlin.logWarn
 
 val Context.isDebug get() = applicationInfo.flags isFlagSet FLAG_DEBUGGABLE
 
@@ -31,7 +31,7 @@ val Context.packageVersionCode
 val Context.packageInfo
     get() = runCatching<PackageInfo> {
         packageManager.getPackageInfo(packageName, 0)
-    }.onFailure(::logWarn).getOrNull()
+    }.logWarn().getOrNull()
 
 val Context.isInitialInstalledVersion: Boolean
     get() = runCatching {

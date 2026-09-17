@@ -32,3 +32,8 @@ fun CSView<*>.snackInfo(
     text: String, time: Duration? = null,
     action: CSAction? = null
 ) = onMain { view.snackInfo(this, text, time, action) }
+
+fun CSView<*>.snackInfo(
+    text: Int, time: Duration? = null,
+    action: CSAction? = null
+) = onMain { view.snackInfo(this, getString(text), time, action) }

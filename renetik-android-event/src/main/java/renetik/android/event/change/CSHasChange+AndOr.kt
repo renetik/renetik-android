@@ -18,10 +18,10 @@ infix fun CSHasChangeValue<Boolean>.and(other: Boolean): CSHasChangeValue<Boolea
 infix fun CSHasChangeValue<Boolean>.and(other: CSHasChangeValue<Boolean>) =
     (this to other).delegate(fromValues = { first, second -> first && second })
 
-
-@JvmName("CSHasChangeValueBooleanAndCSHasChangeValueBooleanNullable")
-infix fun CSHasChangeValue<Boolean>.and(other: CSHasChangeValue<Boolean?>) =
-    (this to other).delegate(fromValues = { first, second -> first && second.isTrue })
+// Makes ambiguity
+//@JvmName("CSHasChangeValueBooleanAndCSHasChangeValueBooleanNullable")
+//infix fun CSHasChangeValue<Boolean>.and(other: CSHasChangeValue<Boolean?>) =
+//    (this to other).delegate(fromValues = { first, second -> first && second.isTrue })
 
 @JvmName("CSHasChangeAndCSValue")
 infix fun CSHasChange<*>.and(other: CSValue<Boolean>): CSHasChange<Unit> {

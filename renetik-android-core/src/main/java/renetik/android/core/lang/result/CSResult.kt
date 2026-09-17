@@ -1,7 +1,6 @@
 package renetik.android.core.lang.result
 
 import renetik.android.core.kotlin.exception
-import renetik.android.core.kotlin.throwCancellation
 import renetik.android.core.lang.result.CSResult.State.Cancel
 import renetik.android.core.lang.result.CSResult.State.Failure
 import renetik.android.core.lang.result.CSResult.State.Success
@@ -34,12 +33,16 @@ data class CSResult<Value>(
     ): CSResult<Value> =
         if (isSuccess) runCatching {
             dispatcher { function(value!!); this }
-        }.throwCancellation().getOrFailResult()
+        }.getOrFailure()
         else this
 
     suspend inline fun <T> ifSuccessReturn(
         crossinline function: suspend (Value) -> CSResult<T>
     ): CSResult<T> = ifSuccessReturn(null, function)
+
+    suspend inline fun <T> ifSuccessSuccess(
+        crossinline function: suspend (Value) -> T
+    ): CSResult<T> = ifSuccessReturn { success(function(it)) }
 
     suspend inline fun <T> ifSuccessReturn(
         dispatcher: CoroutineContext?,
@@ -47,7 +50,7 @@ data class CSResult<Value>(
     ): CSResult<T> =
         if (isSuccess) runCatching {
             dispatcher { function(value!!) }
-        }.throwCancellation().getOrFailResult()
+        }.getOrFailure()
         else CSResult(state, throwable = throwable,
             message = message, code = code)
 
