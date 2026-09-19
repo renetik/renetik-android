@@ -9,6 +9,9 @@ fun <T : CSProperty<Int>> T.coerce(min: Int, max: Int) =
 fun <T : CSProperty<Int>> T.coerce(range: ClosedRange<Int>) =
     computedFrom(from = { it.coerceIn(range) })
 
+fun <T : CSProperty<Float>> T.coerce(range: ClosedRange<Float>) =
+    computedFrom(from = { it.coerceIn(range) })
+
 fun <T : CSProperty<Int>> T.max(value: Int) =
     computedFrom(from = { it.coerceAtMost(value) })
 
