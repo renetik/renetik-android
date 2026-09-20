@@ -175,3 +175,9 @@ val View.rectangleInWindow: Rect
 
 val View.widthProp get() = onSizeChange.delegate(from = { width })
 val View.heightProp get() = onSizeChange.delegate(from = { height })
+
+val View.isQuarterTurnRotation: Boolean
+    get() {
+        val normalizedRotation = ((rotation % 360f) + 360f) % 360f
+        return normalizedRotation == 90f || normalizedRotation == 270f
+    }
