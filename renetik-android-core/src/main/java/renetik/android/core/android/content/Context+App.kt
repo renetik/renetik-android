@@ -1,8 +1,11 @@
 package renetik.android.core.android.content
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.ACTION_MAIN
+import android.content.Intent.CATEGORY_LAUNCHER
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION
 import android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager.NameNotFoundException
@@ -42,6 +45,9 @@ val Context.isInitialInstalledVersion: Boolean
 
 val Context.isPlayStoreInstalled get() = isPackageInstalled("com.android.vending")
 
+/**
+ * The package must be automatically visible or declared in the consuming app's `<queries>`.
+ */
 fun Context.isPackageInstalled(packageName: String): Boolean = try {
     packageManager.getPackageInfo(packageName, 0)
     true
@@ -50,31 +56,16 @@ fun Context.isPackageInstalled(packageName: String): Boolean = try {
 }
 
 fun Context.goHome() =
-    startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
+    startActivity(Intent(ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
 
 fun Context.startApplication(packageName: String) {
-    try {
-        val intent = Intent("android.intent.action.MAIN")
-        intent.addCategory("android.intent.category.LAUNCHER")
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-        val resolveInfoList = packageManager.queryIntentActivities(intent, 0)
-        for (info in resolveInfoList)
-            if (info.activityInfo.packageName.equals(packageName, ignoreCase = true)) {
-                launchComponent(info.activityInfo.packageName, info.activityInfo.name)
-                return
-            }
-        showInMarket(packageName)
-    } catch (e: Exception) {
-        showInMarket(packageName)
+    // Restrict resolution to the requested package without querying the filtered application list.
+    val intent = Intent(ACTION_MAIN).apply {
+        addCategory(CATEGORY_LAUNCHER)
+        setPackage(packageName)
+        addFlags(FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_NO_ANIMATION)
     }
-}
-
-private fun Context.launchComponent(packageName: String, name: String) {
-    val intent = Intent("android.intent.action.MAIN")
-    intent.addCategory("android.intent.category.LAUNCHER")
-    intent.component = ComponentName(packageName, name)
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    startActivity(intent)
+    if (!startActivityIfAvailable(intent)) showInMarket(packageName)
 }
 
 private fun Context.showInMarket(packageName: String?) =

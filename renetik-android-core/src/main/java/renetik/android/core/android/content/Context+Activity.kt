@@ -1,6 +1,8 @@
 package renetik.android.core.android.content
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
@@ -41,4 +43,21 @@ fun Context.openApplicationSettings() {
     intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
     intent.data = Uri.fromParts("package", packageName, null)
     startActivity(intent)
+}
+
+/**
+ * Starts [intent] without a PackageManager preflight because Android package visibility can hide
+ * valid handlers from `resolveActivity()`. Returns false when the activity is missing or its
+ * launch is denied.
+ */
+fun Context.startActivityIfAvailable(
+    intent: Intent, onActivityNotFound: ((ActivityNotFoundException) -> Unit)? = null
+): Boolean = try {
+    startActivity(intent)
+    true
+} catch (exception: ActivityNotFoundException) {
+    onActivityNotFound?.invoke(exception)
+    false
+} catch (_: SecurityException) {
+    false
 }

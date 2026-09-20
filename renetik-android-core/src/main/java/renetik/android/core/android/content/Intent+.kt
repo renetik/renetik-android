@@ -1,7 +1,11 @@
 package renetik.android.core.android.content
 
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+import android.net.Uri
 import renetik.android.core.lang.CSEnvironment.app
 import kotlin.reflect.KClass
 
@@ -32,4 +36,13 @@ fun Intent(action: String, type: String) = Intent(action).also { it.type = type 
 fun Intent(action: String, category: String, type: String) = Intent(action).also {
     it.addCategory(category)
     it.type = type
+}
+
+/**
+ * Grants URI access through ClipData so callers do not need to query receiving packages first.
+ */
+fun Intent.grantUriPermissions(uri: Uri, write: Boolean = false) = apply {
+    clipData = ClipData.newRawUri("", uri)
+    addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+    if (write) addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
 }
