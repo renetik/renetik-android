@@ -14,8 +14,7 @@ class CSTextView @JvmOverloads constructor(
     override val behavior = CSAndroidViewBehavior(this, attrs, defaultClipToOutline = false)
     override val eventOnTouch: CSEvent<CSTouchEventArgs> = event<CSTouchEventArgs>()
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        behavior.measure(widthMeasureSpec, heightMeasureSpec,
-            swapAxes = isQuarterTurnRotation) { widthSpec, heightSpec ->
+        behavior.measure(widthMeasureSpec, heightMeasureSpec) { widthSpec, heightSpec ->
             super.onMeasure(widthSpec, heightSpec)
         }
     }

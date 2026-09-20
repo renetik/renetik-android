@@ -132,6 +132,11 @@ class CSAndroidViewBehaviorTest {
         assert(expected = true, actual = rotatedTo(450f))
     }
 
+    /**
+     * CSImageView is the only swapAxes caller left. Note it reports the pre-rotation box and
+     * does not swap the measured size back, so it only lands correctly when the parent centres
+     * it and tolerates the overflow, the way the FrameLayout in the vertical piano key does.
+     */
     @Test
     fun rotatedImageViewMeasuresSwapped() {
         val view = CSImageView(context)
@@ -146,13 +151,18 @@ class CSAndroidViewBehaviorTest {
         assert(expected = 100, actual = view.measuredHeight)
     }
 
+    /**
+     * CSTextView does not pass swapAxes, so a rotated one measures like a plain TextView and
+     * keeps the box its parent sized it for. Vertical text belongs in CSVerticalTextView,
+     * which swaps the measured size back instead of reporting the rotated box.
+     */
     @Test
-    fun rotatedTextViewMeasuresSwapped() {
+    fun rotatedTextViewMeasuresLikeAPlainTextView() {
         val view = CSTextView(context)
         view.rotation = 90f
         view.measure(exactly(100), exactly(40))
-        assert(expected = 40, actual = view.measuredWidth)
-        assert(expected = 100, actual = view.measuredHeight)
+        assert(expected = 100, actual = view.measuredWidth)
+        assert(expected = 40, actual = view.measuredHeight)
     }
 
     @Test
