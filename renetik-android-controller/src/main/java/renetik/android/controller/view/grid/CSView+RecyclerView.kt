@@ -1,8 +1,11 @@
 package renetik.android.controller.view.grid
 
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.HORIZONTAL
+import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import renetik.android.controller.base.CSView
 import renetik.android.core.android.content.displayWidth
 
@@ -33,4 +36,9 @@ fun <T : CSView<RecyclerView>> T.autoFitGridLayout(columnWidth: Int) = apply {
 
 fun <T : CSView<RecyclerView>> T.columnLayout(columnsCount: Int) = apply {
     view.layoutManager = GridLayoutManager(this, columnsCount)
+}
+
+fun <T : CSView<RecyclerView>> T.linearLayout(isHorizontal: Boolean) = apply {
+    view.layoutManager = LinearLayoutManager(
+        this, if (isHorizontal) HORIZONTAL else VERTICAL, false)
 }

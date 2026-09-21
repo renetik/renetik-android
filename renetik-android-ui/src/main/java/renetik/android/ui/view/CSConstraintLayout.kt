@@ -5,14 +5,11 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.MeasureSpec.EXACTLY
-import android.view.View.MeasureSpec.makeMeasureSpec
 import androidx.constraintlayout.widget.ConstraintLayout
 import renetik.android.event.CSEvent
 import renetik.android.event.CSEvent.Companion.event
 import renetik.android.event.fire
 import renetik.android.event.registration.CSRegistration
-import kotlin.properties.Delegates.notNull
 
 open class CSConstraintLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
@@ -21,11 +18,7 @@ open class CSConstraintLayout @JvmOverloads constructor(
     CSHasTouchEvent, CSAndroidView, CSHasDrawEvent {
 
     override val self: View get() = this
-    override var minWidthParam: Int by notNull()
-    override var maxWidthParam: Int by notNull()
-    override var minHeightParam: Int by notNull()
-    override var maxHeightParam: Int by notNull()
-    override var dispatchStateParam: Boolean by notNull()
+    override val behavior = CSAndroidViewBehavior(this, attrs)
 
     override val eventOnTouch: CSEvent<CSTouchEventArgs> = event<CSTouchEventArgs>()
     var onDispatchTouchEvent: ((event: MotionEvent) -> Boolean)? = null
@@ -38,36 +31,22 @@ open class CSConstraintLayout @JvmOverloads constructor(
 
     var eventOnLayout = event()
 
-    init {
-        loadCSAttributes(attrs)
-    }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        var widthMeasure = widthMeasureSpec
-        if (minWidthParam != -1 && measuredWidth < minWidthParam)
-            widthMeasure = makeMeasureSpec(minWidthParam, EXACTLY)
-        else if (maxWidthParam != -1 && measuredWidth > maxWidthParam)
-            widthMeasure = makeMeasureSpec(maxWidthParam, EXACTLY)
-
-        var heightMeasure = heightMeasureSpec
-        if (minHeightParam != -1 && measuredHeight < minHeightParam)
-            heightMeasure = makeMeasureSpec(minHeightParam, EXACTLY)
-        else if (maxHeightParam != -1 && measuredHeight > maxHeightParam)
-            heightMeasure = makeMeasureSpec(maxHeightParam, EXACTLY)
-        super.onMeasure(widthMeasure, heightMeasure)
+        behavior.measure(widthMeasureSpec, heightMeasureSpec) { widthSpec, heightSpec ->
+            super.onMeasure(widthSpec, heightSpec)
+        }
     }
 
     override fun dispatchSetActivated(activated: Boolean) {
-        if (dispatchStateParam) super.dispatchSetActivated(activated)
+        if (behavior.dispatchState) super.dispatchSetActivated(activated)
     }
 
     override fun dispatchSetSelected(selected: Boolean) {
-        if (dispatchStateParam) super.dispatchSetSelected(selected)
+        if (behavior.dispatchState) super.dispatchSetSelected(selected)
     }
 
     override fun dispatchSetPressed(pressed: Boolean) {
-        if (dispatchStateParam) super.dispatchSetPressed(pressed)
+        if (behavior.dispatchState) super.dispatchSetPressed(pressed)
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {

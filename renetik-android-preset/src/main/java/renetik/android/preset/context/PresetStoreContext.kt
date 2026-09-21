@@ -13,6 +13,7 @@ import renetik.android.preset.nullDoubleProperty
 import renetik.android.preset.nullFloatProperty
 import renetik.android.preset.nullIntProperty
 import renetik.android.preset.nullListItemProperty
+import renetik.android.preset.nullLongProperty
 import renetik.android.preset.nullStringProperty
 import renetik.android.preset.property
 import renetik.android.preset.property.CSPresetProperty
@@ -20,6 +21,7 @@ import renetik.android.preset.property.nullable.CSDoubleNullablePresetProperty
 import renetik.android.preset.property.nullable.CSFloatNullablePresetProperty
 import renetik.android.preset.property.nullable.CSIntNullablePresetProperty
 import renetik.android.preset.property.nullable.CSListItemNullablePresetProperty
+import renetik.android.preset.property.nullable.CSLongNullablePresetProperty
 import renetik.android.preset.property.nullable.CSStringNullablePresetProperty
 import renetik.android.preset.property.value.CSBooleanValuePresetProperty
 import renetik.android.preset.property.value.CSFloatValuePresetProperty
@@ -150,6 +152,12 @@ class PresetStoreContext(
     override fun nullFloatProperty(
         key: String, default: Float?, onChange: ((value: Float?) -> Unit)?
     ): CSFloatNullablePresetProperty = add(key, preset.nullFloatProperty(
+        this, storeKey(key), default, onChange
+    ))
+
+    override fun nullLongProperty(
+        key: String, default: Long?, onChange: ((value: Long?) -> Unit)?
+    ): CSLongNullablePresetProperty = add(key, preset.nullLongProperty(
         this, storeKey(key), default, onChange
     ))
 

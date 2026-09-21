@@ -55,6 +55,10 @@ interface CSStoreContext
         key: String, default: Float? = null, onChange: ((value: Float?) -> Unit)? = null
     ): CSStoreProperty<Float?>
 
+    fun nullLongProperty(
+        key: String, default: Long? = null, onChange: ((value: Long?) -> Unit)? = null
+    ): CSStoreProperty<Long?>
+
     fun nullDoubleProperty(
         key: String, default: Double? = null, onChange: ((value: Double?) -> Unit)? = null
     ): CSStoreProperty<Double?>

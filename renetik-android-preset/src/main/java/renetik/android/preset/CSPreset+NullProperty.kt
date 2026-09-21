@@ -7,6 +7,7 @@ import renetik.android.preset.property.nullable.CSBooleanNullablePresetProperty
 import renetik.android.preset.property.nullable.CSDoubleNullablePresetProperty
 import renetik.android.preset.property.nullable.CSFloatNullablePresetProperty
 import renetik.android.preset.property.nullable.CSIntNullablePresetProperty
+import renetik.android.preset.property.nullable.CSLongNullablePresetProperty
 import renetik.android.preset.property.nullable.CSStringNullablePresetProperty
 
 fun Preset.nullStringProperty(
@@ -28,6 +29,11 @@ fun Preset.nullFloatProperty(
     parent: CSHasRegistrationsHasDestruct, key: String, default: Float? = null,
     onChange: ((value: Float?) -> Unit)? = null
 ) = add(CSFloatNullablePresetProperty(parent, this, key, default, onChange))
+
+fun Preset.nullLongProperty(
+    parent: CSHasRegistrationsHasDestruct, key: String, default: Long? = null,
+    onChange: ((value: Long?) -> Unit)? = null
+) = add(CSLongNullablePresetProperty(parent, this, key, default, onChange))
 
 fun Preset.nullDoubleProperty(
     parent: CSHasRegistrationsHasDestruct, key: String, default: Double? = null,

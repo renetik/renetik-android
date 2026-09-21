@@ -17,6 +17,14 @@ import renetik.android.ui.R.styleable.CSLayout_isRotatedClockwise
 import renetik.android.ui.widget.text
 import kotlin.math.abs
 
+/**
+ * TextView drawn a quarter turn round, reading bottom to top, or top to bottom with
+ * [isRotatedClockwise]. It measures to its on screen box, so `android:gravity` and padding
+ * work in screen terms: `start`/`end` move the text across the column, `top`/`bottom` along it.
+ *
+ * Several lines stack across the column, and horizontal gravity also sets how they line up
+ * against each other along the run.
+ */
 class CSVerticalTextView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : AppCompatTextView(context, attrs) {
@@ -57,7 +65,7 @@ class CSVerticalTextView @JvmOverloads constructor(
         val parentHeight = MeasureSpec.getSize(heightMeasureSpec)
         val parentWidth = MeasureSpec.getSize(widthMeasureSpec)
         val content = if (text.isNullOrEmpty()) hint else text()
-        if (isAutoSized && parentHeight > 0 && parentWidth > 0 && !content.isNotEmpty()) {
+        if (isAutoSized && parentHeight > 0 && parentWidth > 0 && !content.isNullOrEmpty()) {
             adjustTextSize(parentHeight, parentWidth, content.toString())
         }
         super.onMeasure(heightMeasureSpec, widthMeasureSpec)
@@ -89,38 +97,39 @@ class CSVerticalTextView @JvmOverloads constructor(
         val isHint = text.isNullOrEmpty()
         if (isHint && hint.isNullOrEmpty()) return
         val textLayout = if (isHint) makeHintLayout() else layout ?: return
+
+        // Rotated run: its height is the on-screen width, its width the on-screen height.
+        // Placed by its ink, not by the full width line, so that the alignment the layout
+        // applied along the run does not decide where the text sits. Gravity decides.
+        val lines = 0 until textLayout.lineCount
+        val inkStart = lines.minOf(textLayout::getLineLeft)
+        val inkEnd = lines.maxOf(textLayout::getLineRight)
+        val blockWidth = textLayout.height.toFloat()
+        val blockHeight = inkEnd - inkStart
+        val absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection)
+        val left = when (absoluteGravity and Gravity.HORIZONTAL_GRAVITY_MASK) {
+            Gravity.CENTER_HORIZONTAL ->
+                paddingLeft + (width - paddingLeft - paddingRight - blockWidth) / 2f
+            Gravity.RIGHT -> width - paddingRight - blockWidth
+            else -> paddingLeft.toFloat()
+        }
+        val top = when (absoluteGravity and Gravity.VERTICAL_GRAVITY_MASK) {
+            Gravity.CENTER_VERTICAL ->
+                paddingTop + (height - paddingTop - paddingBottom - blockHeight) / 2f
+            Gravity.BOTTOM -> height - paddingBottom - blockHeight
+            else -> paddingTop.toFloat()
+        }
+
         canvas.withSave {
             if (isRotatedClockwise) {
                 translate(width.toFloat(), 0f)
                 rotate(90f)
+                translate(top - inkStart, width - left - blockWidth)
             } else {
                 translate(0f, height.toFloat())
                 rotate(-90f)
+                translate(height - inkEnd - top, left)
             }
-
-            val viewThickness = width.toFloat()
-            val layoutThickness = textLayout.height.toFloat()
-            var yOffset: Float
-            val verticalGravity = gravity and Gravity.VERTICAL_GRAVITY_MASK
-            val availableThickness = viewThickness - paddingTop - paddingBottom
-            yOffset = when (verticalGravity) {
-                Gravity.CENTER_VERTICAL -> paddingTop + (availableThickness - layoutThickness) / 2f
-                Gravity.BOTTOM -> viewThickness - paddingBottom - layoutThickness
-                else -> paddingTop.toFloat()
-            }
-
-            val viewLength = height.toFloat()
-            val layoutLength = textLayout.width.toFloat()
-            var xOffset: Float
-            val horizontalGravity = gravity and Gravity.HORIZONTAL_GRAVITY_MASK
-            val availableLength = viewLength - paddingLeft - paddingRight
-            xOffset = when (horizontalGravity) {
-                Gravity.CENTER_HORIZONTAL -> paddingLeft + (availableLength - layoutLength) / 2f
-                Gravity.RIGHT -> viewLength - paddingRight - layoutLength
-                else -> paddingLeft.toFloat()
-            }
-
-            translate(xOffset, yOffset)
             paint.color = if (isHint) currentHintTextColor else currentTextColor
             paint.drawableState = drawableState
             textLayout.draw(this)
