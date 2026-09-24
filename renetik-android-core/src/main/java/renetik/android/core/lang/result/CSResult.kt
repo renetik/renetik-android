@@ -44,6 +44,11 @@ data class CSResult<Value>(
         crossinline function: suspend (Value) -> T
     ): CSResult<T> = ifSuccessReturn { success(function(it)) }
 
+    suspend inline fun <T> ifSuccessSuccess(
+        dispatcher: CoroutineContext?,
+        crossinline function: suspend (Value) -> T
+    ): CSResult<T> = ifSuccessReturn(dispatcher) { success(function(it)) }
+
     suspend inline fun <T> ifSuccessReturn(
         dispatcher: CoroutineContext?,
         crossinline function: suspend (Value) -> CSResult<T>

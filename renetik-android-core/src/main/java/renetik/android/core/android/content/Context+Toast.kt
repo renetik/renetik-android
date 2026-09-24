@@ -23,6 +23,9 @@ enum class CSToastTime(val value: Int) {
 
 fun Context.toast(text: String) = toast(text, time = ShortTime)
 
+fun Context.toast(text: Int, time: CSToastTime = ShortTime) =
+    toast(text = getString(text), time)
+
 fun Context.toast(text: String, time: CSToastTime = ShortTime) {
     fun toast() = Toast.makeText(this, text, time.value).show()
     if (isThreadMain) toast() else mainHandler.send(::toast)
