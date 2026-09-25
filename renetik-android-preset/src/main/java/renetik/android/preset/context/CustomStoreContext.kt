@@ -1,5 +1,6 @@
 package renetik.android.preset.context
 
+import renetik.android.core.kotlin.collections.first
 import renetik.android.core.lang.ArgFun
 import renetik.android.core.lang.CSHasId
 import renetik.android.event.change.invoke
