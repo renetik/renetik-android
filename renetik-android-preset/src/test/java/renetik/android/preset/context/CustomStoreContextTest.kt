@@ -6,6 +6,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import renetik.android.core.base.CSTestApplication
+import renetik.android.core.lang.CSHasId
 import renetik.android.event.lifecycle.CSModel
 import renetik.android.json.toJson
 import renetik.android.store.context.CSHasStoreContext
@@ -56,5 +57,25 @@ class CustomStoreContextTest {
 
         assertEquals("value", property.value.text)
         assertEquals("""{"context property":{"text":"value"}}""", jsonStore.toJson())
+    }
+
+    @Test
+    fun blankIdDoesNotPrefixKey() {
+        val context = CustomStoreContext(parent, jsonStore, CSHasId(""), "some_key")
+        assertEquals("some_key", context.id)
+        assertEquals("some_key value", context.storeKey("value"))
+    }
+
+    @Test
+    fun idIsEmptyWithoutIdAndKey() {
+        assertEquals("", CustomStoreContext(parent, jsonStore).id)
+    }
+
+    @Test
+    fun idCombinesHasIdWithKey() {
+        assertEquals("instrument sampler",
+            CustomStoreContext(parent, jsonStore, CSHasId("instrument"), "sampler").id)
+        assertEquals("instrument",
+            CustomStoreContext(parent, jsonStore, CSHasId("instrument")).id)
     }
 }

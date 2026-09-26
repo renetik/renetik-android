@@ -2,13 +2,13 @@
 
 package renetik.android.core.kotlin.primitives
 
+import renetik.android.core.kotlin.logWarn
 import renetik.android.core.kotlin.text.StringBuilder
 import renetik.android.core.kotlin.text.add
 import renetik.android.core.kotlin.text.deleteLast
 import renetik.android.core.kotlin.text.reload
 import renetik.android.core.lang.CSStringConstants
 import renetik.android.core.lang.catchWarnReturn
-import renetik.android.core.kotlin.logWarn
 import java.text.Normalizer
 import java.util.Locale
 import java.util.Random
@@ -116,6 +116,8 @@ fun String.removeAccents(): String {
     return Normalizer.normalize(this, Normalizer.Form.NFD)
         .replace(nonSpacingCharactersRegex, "")
 }
+
+fun String.normalizeWhitespace(): String = trim().replace(Regex("\\s+"), " ")
 
 fun CharSequence.containsAll(words: List<String>, ignoreCase: Boolean = false): Boolean =
     words.all { contains(it, ignoreCase) }

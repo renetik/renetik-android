@@ -33,8 +33,9 @@ class CustomStoreContext(
     private val hasId: CSHasId? = null,
     override val key: String? = null,
 ) : CSModel(parent), CSStoreContext {
-    override val id = hasId?.id
-        ?.let { id -> key?.let { "$id $it" } ?: id } ?: key ?: ""
+    override val id = hasId?.id?.takeIf(String::isNotBlank)
+        ?.let { id -> key?.takeIf(String::isNotBlank)?.let { "$id $it" } ?: id }
+        ?: key?.takeIf(String::isNotBlank) ?: ""
     override val data: CSJsonObjectInterface = store
     private val childContexts = mutableListOf<CSStoreContext>()
     private val properties = mutableListOf<CSStoreProperty<*>>()
