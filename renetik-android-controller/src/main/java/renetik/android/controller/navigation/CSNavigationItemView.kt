@@ -83,6 +83,7 @@ open class CSNavigationItemView(
     var isFullScreen = false
     var isPopup = false
         internal set
+    val isOpen: Boolean get() = navigation?.controllers?.contains(this) == true
 
     open fun onViewControllerPush(navigation: CSNavigationView) = Unit
     open fun onViewControllerPop(navigation: CSNavigationView) = Unit
@@ -106,7 +107,7 @@ open class CSNavigationItemView(
 
     init {
         this + navigationParent.eventDestruct {
-            if (isShowingInPager) close()
+            if (isOpen) close()
             if (!lifecycleStopOnRemoveFromParentView) destruct()
         }
     }

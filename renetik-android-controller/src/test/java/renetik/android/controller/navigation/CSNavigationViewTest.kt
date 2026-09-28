@@ -2,6 +2,7 @@ package renetik.android.controller.navigation
 
 import android.os.Bundle
 import android.widget.FrameLayout
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,8 +14,10 @@ import renetik.android.controller.base.CSActivityView
 import renetik.android.controller.base.CSViewActivity
 import renetik.android.controller.base.isPaused
 import renetik.android.controller.base.push
+import renetik.android.controller.base.reusable
 import renetik.android.core.lang.CSLayoutRes.Companion.layout
 import renetik.android.core.lang.value.isTrue
+import renetik.android.event.lifecycle.destruct
 import renetik.android.testing.TestApplication
 import renetik.android.ui.R.layout.cs_frame_match
 
@@ -101,5 +104,19 @@ class CSNavigationViewTest {
         assertTrue(itemView1.isVisibility.isTrue)
         assertTrue(itemView2.isDestructed)
         assertTrue(itemView3.isDestructed)
+    }
+
+    @Test
+    fun coveredItemClosesWhenParentIsDestructed() {
+        val parent = CSActivityView<FrameLayout>(navigation, layout(cs_frame_match))
+        val overlay = CSNavigationItemView(parent, viewLayout = cs_frame_match)
+            .reusable().show()
+        CSNavigationItemView(navigation, viewLayout = cs_frame_match).fullScreen().show()
+        assertTrue(overlay.isOpen)
+
+        parent.destruct()
+
+        assertFalse(overlay.isOpen)
+        assertTrue(overlay.isDestructed)
     }
 }
