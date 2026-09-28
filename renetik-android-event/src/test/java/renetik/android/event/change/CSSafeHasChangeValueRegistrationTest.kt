@@ -73,6 +73,31 @@ class CSSafeHasChangeValueRegistrationTest {
     }
 
     @Test
+    fun normalIdentityHasChangeValueKeepsUnsafePropagation() {
+        val parent = CSModel()
+        val sourceProperty = property(1)
+        val source: CSHasChangeValue<Int> = sourceProperty
+        var callbackValue: Int? = null
+        val identity = source.safeStateDelegate(parent, onChange = { callbackValue = it })
+        var unsafeValue: Int? = null
+        var safeValue: Int? = null
+        identity.onUnsafeChange { unsafeValue = it }
+        identity.onChange { safeValue = it }
+
+        Thread { sourceProperty assign 2 }.apply {
+            start()
+            join()
+        }
+        assert(expected = 2, actual = identity.value)
+        assert(expected = 2, actual = unsafeValue)
+        assert(expected = null, actual = safeValue)
+        assert(expected = null, actual = callbackValue)
+        runUiThreadTasksIncludingDelayedTasks()
+        assert(expected = 2, actual = safeValue)
+        assert(expected = 2, actual = callbackValue)
+    }
+
+    @Test
     fun safeFifthTupleOnChangeUsesUnsafePropagation() {
         val parent = CSModel()
         val item1 = property(1)

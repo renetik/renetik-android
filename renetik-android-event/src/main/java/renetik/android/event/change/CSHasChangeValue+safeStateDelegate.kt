@@ -17,12 +17,13 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 fun <T> CSHasChangeValue<T>.safeStateDelegate(
     parent: CSHasDestruct,
     onChange: ArgFun<T>? = null
-): CSSafeHasChangeValue<T> =
-    object : CSSafeHasChangeValueBase<T>(parent, value, onChange) {
+): CSSafeHasChangeValue<T> = let { source ->
+    object : CSSafeHasChangeValueBase<T>(parent, source.value, onChange) {
         init {
-            this + this.onChange { newValue -> value(newValue) }
+            this + source.onChange { newValue -> value(newValue) }
         }
     }
+}
 
 @JvmName("safeStateDelegateWith2Safe1")
 fun <Argument1, Argument2, Item1, Item2> Pair<Item1, Item2>.safeStateDelegate(
