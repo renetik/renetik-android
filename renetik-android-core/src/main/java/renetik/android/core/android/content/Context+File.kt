@@ -6,7 +6,7 @@ import java.io.File
 import java.util.UUID
 
 fun Context.temporaryFile(extension: String? = null): File =
-    File.createTempFile(applicationLabel, extension?.let { ".$it" }, cacheDir)
+    File.createTempFile("temp", extension?.let { ".$it" }, cacheDir)
 
 fun Context.temporaryFolder(): File {
     val uniqueName = "temp_folder_${UUID.randomUUID()}"
