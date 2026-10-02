@@ -37,14 +37,20 @@ fun CSRegistration(
 
 inline fun List<CSRegistration>.paused(function: Fun) {
     onEach { it.pause() }
-    function()
-    onEach { it.resume() }
+    try {
+        function()
+    } finally {
+        onEach { it.resume() }
+    }
 }
 
 inline fun CSRegistration.paused(function: Fun) {
     pause()
-    function()
-    if (!isCanceled) resume()
+    try {
+        function()
+    } finally {
+        if (!isCanceled) resume()
+    }
 }
 
 fun CSRegistration.setActive(active: Boolean) {
