@@ -22,6 +22,16 @@ fun <Argument> CSHasChangeValue<Argument>.stateDelegate(
     parent: CSHasRegistrations? = null, onChange: ArgFun<Argument>? = null,
 ): CSHasChangeValue<Argument> = stateDelegate(parent, fromValue = { it }, onChange)
 
+fun <T : Any> CSHasChangeValue<T?>.stateDelegateNonNull(
+    parent: CSHasRegistrations? = null,
+): CSHasChangeValue<T> {
+    var previous = checkNotNull(value)
+    return stateDelegate(parent, fromValue = { current ->
+        if (current != null) previous = current
+        previous
+    })
+}
+
 fun <Argument1, Argument2, Argument3, Argument4, Argument5, Argument6>
         CSSixtuple<CSHasChangeValue<Argument1>, CSHasChangeValue<Argument2>,
                 CSHasChangeValue<Argument3>, CSHasChangeValue<Argument4>,
