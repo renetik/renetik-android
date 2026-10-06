@@ -118,7 +118,14 @@ class CSPreset<PresetListItem : CSPresetItem,
 
     suspend fun saveAsCurrent() = save(listItem.value)
 
-    suspend fun save(item: PresetListItem) = eventSave.fire(item)
+    /**
+     * Runs [onSaveToItem], then fires [eventSave]. A failing step reaches the caller and
+     * [eventSave] does not fire. [edit] changes the data the step saves into the item.
+     */
+    suspend fun save(item: PresetListItem, edit: (CSStore) -> Unit = {}) {
+        onSaveToItem(item, edit)
+        eventSave.fire(item)
+    }
 
     suspend fun delete(item: PresetListItem) {
         list.remove(item)
@@ -135,4 +142,7 @@ class CSPreset<PresetListItem : CSPresetItem,
     @Suppress("UNUSED_ANONYMOUS_PARAMETER")
     var onSaveToParentPresetItemStore: (String, CSStore) -> Unit =
         { _, itemStore -> this.store.saveTo(itemStore) }
+
+    var onSaveToItem: suspend (item: PresetListItem, edit: (CSStore) -> Unit) -> Unit =
+        { _, _ -> }
 }
