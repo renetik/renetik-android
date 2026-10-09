@@ -20,7 +20,6 @@ class CSJsonListValueStoreProperty<T : CSJsonObjectStore>(
 
     override fun onLoadedValueChanged(value: List<T>?) {
         valuesOnChanged.cancelRegistrations()
-        value?.forEach { valuesOnChanged + it.eventChanged.onChange { set(store, value) } }
+        value?.forEach { valuesOnChanged.add(it.eventChanged.onChange { set(store, value) }) }
     }
 }
-
