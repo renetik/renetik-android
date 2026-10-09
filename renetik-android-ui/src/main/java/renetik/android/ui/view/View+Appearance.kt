@@ -111,6 +111,10 @@ fun View.alphaToDisabled(value: Boolean = true, normal: Float = 1F) {
     alpha = if (value) context.disabledAlpha else normal
 }
 
+inline fun View.enabledIf(
+    property: CSHasChangeValue<Boolean>
+): CSRegistration = property.action { enabled(it) }
+
 val Context.disabledAlpha
     get() = resources.getString(R.string.cs_disabled_alpha).toFloat()
 
