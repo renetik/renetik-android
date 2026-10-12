@@ -24,15 +24,14 @@ class SamplePresetItemList : CSPresetItemList<SamplePresetItem> {
     override val id = "SamplePresetItemList"
     override val eventReload: CSEvent<Unit> = event()
     override val categories: List<String> = listOf(sampleCategory)
-    private val list = mutableListOf(SamplePresetItem("default"))
-
-    override val items: List<SamplePresetItem> get() = list
-    override fun items(category: String): List<SamplePresetItem> = list
+    override val items: List<SamplePresetItem>
+        field = mutableListOf(SamplePresetItem("default"))
+    override fun items(category: String): List<SamplePresetItem> = items
     override fun createItem(title: String, category: String): SamplePresetItem =
-        list.put(SamplePresetItem(title))
+        items.put(SamplePresetItem(title))
 
     override fun remove(item: SamplePresetItem) {
-        list.remove(item)
+        items.remove(item)
     }
 
     override fun reload() = eventReload()

@@ -158,8 +158,8 @@ open class CSView<ViewType : View> : CSContext, CSHasParentView, CSViewInterface
     open val contentView: View get() = view
 
     //Visibility
-    private val _isVisible = property(false)
-    override val isVisibility: CSHasChangeValue<Boolean> get() = _isVisible
+    final override val isVisibility: CSHasChangeValue<Boolean>
+        field = property(false)
     private var onViewShowingCalled = false
 
     override fun updateVisibility() {
@@ -174,7 +174,7 @@ open class CSView<ViewType : View> : CSContext, CSHasParentView, CSViewInterface
 
     private fun onViewVisibilityChanged(showing: Boolean) {
         if (isVisibility.value == showing) return
-        _isVisible.value(showing)
+        isVisibility.value(showing)
         if (isVisibility.isTrue) onViewShowing() else onViewHiding()
     }
 
