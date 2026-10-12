@@ -19,6 +19,7 @@ import renetik.android.event.change.onChangeOnce
 import renetik.android.event.change.wait
 import renetik.android.event.lifecycle.CSHasDestruct
 import renetik.android.event.lifecycle.destruct
+import renetik.android.event.lifecycle.onDestructed
 import renetik.android.event.registration.CSHasRegistrations
 import renetik.android.event.registration.CSRegistration
 import renetik.android.event.registration.CSRegistration.Companion.CSRegistration
@@ -47,7 +48,6 @@ import renetik.android.ui.view.textView
 import renetik.android.ui.view.timePicker
 import renetik.android.ui.view.view
 import renetik.android.ui.view.webView
-import renetik.android.ui.protocol.CSViewInterface
 
 fun <T : View> CSViewInterface.findView(@IdRes id: Int): T? = view.findView(id)
 
@@ -110,6 +110,10 @@ fun CSViewInterface.progress(@IdRes id: Int) = view.progress(id)
 
 fun <Type : CSViewInterface> Type.removeFromSuperview() = apply {
     if (!isDestructed) view.removeFromSuperview()
+}
+
+fun <Type : CSViewInterface> Type.removeOnDestruct() = apply {
+    onDestructed { view.removeFromSuperview() }
 }
 
 fun CSViewInterface.registerAfterLayout(function: () -> Unit) {
