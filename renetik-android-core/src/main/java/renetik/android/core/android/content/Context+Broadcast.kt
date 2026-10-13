@@ -22,7 +22,7 @@ inline fun Context.register(
 ): BroadcastReceiver = register(IntentFilter(action), exported) { _, _ -> function() }
 
 fun Context.broadcastPendingIntent(actionId: String, flags: Int): PendingIntent =
-    PendingIntent.getBroadcast(this, 0, Intent(actionId), flags)
+    PendingIntent.getBroadcast(this, 0, Intent(actionId).setPackage(packageName), flags)
 
 inline fun Context.register(
     action: String, crossinline function: (Intent, BroadcastReceiver) -> Unit
