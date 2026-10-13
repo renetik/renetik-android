@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import renetik.android.core.android.content.isPermissionsGranted
@@ -12,7 +13,6 @@ import renetik.android.core.kotlin.className
 import renetik.android.core.logging.CSLog.logInfo
 import renetik.android.event.CSEvent.Companion.event
 import renetik.android.event.android.CSHasContext
-import renetik.android.event.change.wait
 import renetik.android.event.fire
 import renetik.android.event.lifecycle.destruct
 import renetik.android.event.property.CSProperty.Companion.property
@@ -58,17 +58,21 @@ abstract class CSActivity : AppCompatActivity(), CSVisibility, CSHasContext, CSV
         logInfo("$requestCode $resultCode $data")
     }
 
-    private val onPermissionsResult = event<Map<String, Boolean>>()
-    private val permissionsLauncher =
-        registerForActivityResult(RequestMultiplePermissions()) { onPermissionsResult.fire(it) }
+    private var permissionsResult: CompletableDeferred<Map<String, Boolean>>? = null
+    private val permissionsLauncher = registerForActivityResult(RequestMultiplePermissions()) {
+        permissionsResult?.complete(it)
+    }
     private val permissionsRequestMutex = Mutex()
 
     // Queued because the system cancels a request started while another one is shown.
+    // A cancelled request delivers its result synchronously inside launch, so the awaited
+    // result has to exist before launching.
     suspend fun requestPermissions(
         permissions: List<String>, requireAll: Boolean = true,
     ): Boolean = permissionsRequestMutex.withLock {
         if (isPermissionsGranted(permissions)) return@withLock true
+        val result = CompletableDeferred<Map<String, Boolean>>().also { permissionsResult = it }
         permissionsLauncher.launch(permissions.toTypedArray())
-        onPermissionsResult.wait().isPermissionsGranted(requireAll)
+        result.await().isPermissionsGranted(requireAll)
     }
 }

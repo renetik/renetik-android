@@ -5,7 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestMultiple
 
 // Empty results mean the system cancelled the request, so they count as denied.
 // Without requireAll a partial grant is enough, like approximate instead of precise location.
-fun Map<String, Boolean>.isPermissionsGranted(requireAll: Boolean = true): Boolean =
+internal fun Map<String, Boolean>.isPermissionsGranted(requireAll: Boolean = true): Boolean =
     isNotEmpty() && if (requireAll) values.all { it } else values.any { it }
 
 // Has to be registered while the fragment or activity is constructed, the returned request can
