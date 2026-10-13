@@ -15,4 +15,12 @@ class CSListItemValueStoreProperty<T>(
     override val default: T get() = getDefault()
     override fun get(store: CSStore): T? = store.getValue(key, values)
     override fun set(store: CSStore, value: T) = store.set(key, value.toId())
+
+    /** Takes the item in [values] equal to the loaded one when it is a newer instance. */
+    fun refreshItem() {
+        val current = values.find { it == loadedValue } ?: return
+        if (current === loadedValue) return
+        loadedValue = current
+        onValueChanged(current)
+    }
 }

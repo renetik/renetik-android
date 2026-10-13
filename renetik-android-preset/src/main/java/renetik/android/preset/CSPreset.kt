@@ -91,6 +91,7 @@ class CSPreset<PresetListItem : CSPresetItem,
     }
 
     suspend fun reload() {
+        listItem.refreshItem()
         val item = listItem.value
         onReload.fire(item)
         reload(listItem.value)

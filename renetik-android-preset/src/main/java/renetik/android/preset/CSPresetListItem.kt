@@ -50,6 +50,9 @@ class CSPresetListItem<
     override fun clear() = property.clear()
     override fun onStoreLoaded() = Unit
 
+    /** Takes the list's current instance of the selected item, which may hold newer saved data. */
+    fun refreshItem() = property.refreshItem()
+
     val currentId: CSProperty<String> = computed(from = { it.id }, to = { presetId ->
         preset.list.find { it.id == presetId } ?: notFoundPresetItem(preset.store)
     })
