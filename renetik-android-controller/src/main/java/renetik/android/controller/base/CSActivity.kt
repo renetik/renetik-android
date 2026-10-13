@@ -3,11 +3,16 @@ package renetik.android.controller.base
 import android.content.Context
 import android.content.Intent
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import renetik.android.core.android.content.isPermissionsGranted
 import renetik.android.core.kotlin.className
 import renetik.android.core.logging.CSLog.logInfo
 import renetik.android.event.CSEvent.Companion.event
 import renetik.android.event.android.CSHasContext
+import renetik.android.event.change.wait
 import renetik.android.event.fire
 import renetik.android.event.lifecycle.destruct
 import renetik.android.event.property.CSProperty.Companion.property
@@ -17,7 +22,6 @@ import renetik.android.ui.protocol.CSVisibility
 
 abstract class CSActivity : AppCompatActivity(), CSVisibility, CSHasContext, CSViewInterface {
     val onActivityResult = event<CSActivityResult>()
-    val onRequestPermissionsResult = event<CSRequestPermissionResult>()
 
     //CSVisibility
     override val isVisibility = property(true)
@@ -54,13 +58,17 @@ abstract class CSActivity : AppCompatActivity(), CSVisibility, CSHasContext, CSV
         logInfo("$requestCode $resultCode $data")
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult.fire(
-            CSRequestPermissionResult(requestCode, permissions, grantResults)
-        )
-        logInfo("$requestCode $permissions $grantResults")
+    private val onPermissionsResult = event<Map<String, Boolean>>()
+    private val permissionsLauncher =
+        registerForActivityResult(RequestMultiplePermissions()) { onPermissionsResult.fire(it) }
+    private val permissionsRequestMutex = Mutex()
+
+    // Queued because the system cancels a request started while another one is shown.
+    suspend fun requestPermissions(
+        permissions: List<String>, requireAll: Boolean = true,
+    ): Boolean = permissionsRequestMutex.withLock {
+        if (isPermissionsGranted(permissions)) return@withLock true
+        permissionsLauncher.launch(permissions.toTypedArray())
+        onPermissionsResult.wait().isPermissionsGranted(requireAll)
     }
 }

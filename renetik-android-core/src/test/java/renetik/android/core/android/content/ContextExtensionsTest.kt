@@ -17,7 +17,6 @@ import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.view.ContextThemeWrapper
-import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -135,12 +134,10 @@ class ContextExtensionsTest {
         shadowOf(application).denyPermissions(CAMERA)
         assertFalse(context.isPermissionGranted(CAMERA))
         assertFalse(context.isPermissionsGranted(CAMERA))
-        assertArrayEquals(arrayOf(CAMERA), context.getDeniedPermissions(listOf(CAMERA)))
 
         shadowOf(application).grantPermissions(CAMERA)
         assertTrue(context.isPermissionGranted(CAMERA))
         assertTrue(context.isPermissionsGranted(listOf(CAMERA)))
-        assertArrayEquals(emptyArray<String>(), context.getDeniedPermissions(listOf(CAMERA)))
     }
 
     @Test

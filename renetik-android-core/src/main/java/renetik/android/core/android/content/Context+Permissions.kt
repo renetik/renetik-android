@@ -4,13 +4,6 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 
-fun Context.getDeniedPermissions(permissions: List<String>): Array<String> {
-    val deniedPermissions = mutableListOf<String>()
-    for (permission in permissions)
-        if (!isPermissionGranted(permission)) deniedPermissions.add(permission)
-    return deniedPermissions.toTypedArray()
-}
-
 fun Context.isPermissionGranted(permission: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permission) == PERMISSION_GRANTED
 }
