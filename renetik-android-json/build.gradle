@@ -1,6 +1,9 @@
 rootProject.ext.namespace = 'renetik.android.json'
 if (!rootProject.ext.is_renetik_development) apply from: '../library.gradle'
 else apply from: '../../library.gradle'
+android {
+    defaultConfig { consumerProguardFiles 'consumer-rules.pro' }
+}
 dependencies {
     implementation project(':renetik-android-core')
     testImplementation project(':renetik-android-testing')
