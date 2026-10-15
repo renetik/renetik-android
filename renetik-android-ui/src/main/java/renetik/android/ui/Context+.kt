@@ -1,14 +1,19 @@
 package renetik.android.ui
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import kotlinx.coroutines.suspendCancellableCoroutine
 import renetik.android.ui.protocol.CSViewInterface
 import kotlin.coroutines.resume
+
+fun Context.colorStateList(resource: Int): ColorStateList =
+    AppCompatResources.getColorStateList(this, resource)!!
 
 val Context.inflaterContext
     get() = CSViewInterface.themeOverride?.let { ContextThemeWrapper(this, it) } ?: this
