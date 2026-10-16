@@ -48,7 +48,3 @@ fun <T> ImageView.image(property: CSHasChangeValue<T>, file: (T) -> File)
 fun <T : ImageView> T.iconTint(@ColorInt color: Int?) = apply {
     imageTintList = color?.let { ColorStateList.valueOf(it) }
 }
-
-fun <T : ImageView> T.iconTint(resource: Int) = apply {
-    imageTintList = ColorStateList.valueOf(resource)
-}
