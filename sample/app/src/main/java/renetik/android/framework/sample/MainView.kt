@@ -33,7 +33,7 @@ class DetailView(parent: CSNavigationItemView) :
 
     override fun onViewReady() {
         super.onViewReady()
-        viewContent.findViewById<android.view.View>(R.id.sample_detail_close)
+        viewContent.findViewById<android.view.View>(R.id.sample_detail_close_button)
             .setOnClickListener { dismiss() }
     }
 }

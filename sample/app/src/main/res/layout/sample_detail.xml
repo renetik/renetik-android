@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sample_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground"
@@ -8,14 +9,14 @@
     android:padding="24dp">
 
     <TextView
-        android:id="@+id/sample_detail_title"
+        android:id="@+id/sample_detail_title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pushed via CSNavigationView"
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/sample_detail_close"
+        android:id="@+id/sample_detail_close_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
