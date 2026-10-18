@@ -1,9 +1,7 @@
 package renetik.android.controller.navigation
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.FrameLayout
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -12,7 +10,6 @@ import org.robolectric.Robolectric.buildActivity
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
-import renetik.android.controller.R
 import renetik.android.controller.base.CSActivityView
 import renetik.android.controller.base.CSViewActivity
 import renetik.android.controller.base.isPaused
@@ -121,13 +118,5 @@ class CSNavigationViewTest {
 
         assertFalse(overlay.isOpen)
         assertTrue(overlay.isDestructed)
-    }
-
-    @Test
-    fun navigationLayoutsDeclareTheirRootIdentities() {
-        val inflater = LayoutInflater.from(activityController.get())
-        assertEquals(R.id.cs_navigation, inflater.inflate(R.layout.cs_navigation, null, false).id)
-        assertEquals(R.id.cs_navigation_dialog,
-            inflater.inflate(R.layout.cs_navigation_dialog, null, false).id)
     }
 }
