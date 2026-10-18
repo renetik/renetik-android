@@ -6,7 +6,7 @@ import android.view.KeyEvent
 
 open class CSEditText @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = androidx.appcompat.R.attr.editTextStyle
 ) : androidx.appcompat.widget.AppCompatEditText(context, attrs, defStyleAttr) {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
