@@ -197,4 +197,25 @@ class CSPresetSimpleTests {
         isModifiedParent.destruct()
         assertEquals(1, preset.registrations.size)
     }
+
+    @Test
+    fun aPropertyCountsAsModifiedOnlyWhileItsConditionHolds() {
+        val parent = CSModel()
+        val presetList = TestCSPresetItemList(ClearPresetItemId)
+        val preset = CSPreset(
+            parent, CSJsonObjectStore(), "test", presetList, { NotFoundPresetItem() }
+        ).init()
+        val child = CSPreset(parent, preset, "child", presetList, { NotFoundPresetItem() }).init()
+        var isTracked = false
+        child.title.trackModifiedIf { isTracked }
+
+        child.title assign "Renamed"
+
+        assertEquals(false, child.isModified)
+        assertEquals(false, preset.isModified)
+        isTracked = true
+        assertEquals(true, child.isModified)
+        assertEquals(true, preset.isModified)
+        parent.destruct()
+    }
 }
