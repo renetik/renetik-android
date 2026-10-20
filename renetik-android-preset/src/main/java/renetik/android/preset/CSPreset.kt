@@ -65,7 +65,11 @@ class CSPreset<PresetListItem : CSPresetItem,
         properties.toList().forEach { it.clear() }
     }
 
-    val isModified: Boolean get() = isModifiedIn(listItem.value.store)
+    /**
+     * Whether this preset differs from its item. Without a found item it has none to differ from.
+     */
+    val isModified: Boolean
+        get() = !listItem.isNotFound && isModifiedIn(listItem.value.store)
 
     private fun isModifiedIn(store: CSStore): Boolean =
         properties.any { it.isTrackedModifiedIn(store) } || presets.any {
@@ -130,6 +134,7 @@ class CSPreset<PresetListItem : CSPresetItem,
 
     suspend fun delete(item: PresetListItem) {
         list.remove(item)
+        listItem.onItemRemoved(item)
         eventDelete.fire(item)
     }
 

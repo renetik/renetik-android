@@ -45,7 +45,14 @@ class CSPresetListItem<
         }
     }
 
-    override fun saveTo(store: CSStore) = store.set(key, value.toId())
+    /** Whether the stored id has no item in the list, so the preset holds only its own data. */
+    val isNotFound: Boolean get() = value == notFoundItem
+
+    /** The id to store, which stays as loaded while its item is not found. */
+    private val storedId: String
+        get() = if (isNotFound) parentStore.getString(key) ?: value.toId() else value.toId()
+
+    override fun saveTo(store: CSStore) = store.set(key, storedId)
     override fun clearKeyData() = property.clear()
     override fun clear() = property.clear()
     override fun onStoreLoaded() = Unit
@@ -53,12 +60,17 @@ class CSPresetListItem<
     /** Takes the list's current instance of the selected item, which may hold newer saved data. */
     fun refreshItem() = property.refreshItem()
 
+    /** A removed selected item leaves the preset not found, with its data and stored id. */
+    fun onItemRemoved(item: PresetItem) {
+        if (value == item) property.update()
+    }
+
     val currentId: CSProperty<String> = computed(from = { it.id }, to = { presetId ->
-        preset.list.find { it.id == presetId } ?: notFoundPresetItem(preset.store)
+        preset.list.find { it.id == presetId } ?: notFoundItem
     })
 
     override fun isTrackedModifiedIn(store: CSStore) =
-        if (store.has(key)) currentId.value != store.getString(key)
+        if (store.has(key)) storedId != store.getString(key)
         else currentId.value != getDefaultItem().id
 
     private fun getDefaultItem(): PresetItem =
