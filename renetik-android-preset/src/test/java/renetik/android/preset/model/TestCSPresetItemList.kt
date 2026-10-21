@@ -11,6 +11,7 @@ import renetik.android.preset.CSPresetItemList
 class TestCSPresetItemList(firstItemId: String) : CSPresetItemList<CSPresetItem> {
     override val id = className
     override val eventReload: CSEvent<Unit> = event()
+    override val eventRemove = event<CSPresetItem>()
     override val categories: List<String> = listOf(defaultCategory, userCategory)
     private val defaultPresetItems = mutableListOf<CSPresetItem>()
     private val userPresetItems = mutableListOf<CSPresetItem>()
@@ -22,6 +23,7 @@ class TestCSPresetItemList(firstItemId: String) : CSPresetItemList<CSPresetItem>
     override fun remove(item: CSPresetItem) {
         defaultPresetItems.remove(item)
         userPresetItems.remove(item)
+        eventRemove(item)
     }
 
     override fun items(category: String): List<CSPresetItem> = when (category) {

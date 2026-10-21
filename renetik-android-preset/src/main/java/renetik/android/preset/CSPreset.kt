@@ -134,7 +134,6 @@ class CSPreset<PresetListItem : CSPresetItem,
 
     suspend fun delete(item: PresetListItem) {
         list.remove(item)
-        listItem.onItemRemoved(item)
         eventDelete.fire(item)
     }
 

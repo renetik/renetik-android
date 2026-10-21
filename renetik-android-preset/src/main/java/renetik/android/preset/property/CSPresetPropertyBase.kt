@@ -60,14 +60,18 @@ abstract class CSPresetPropertyBase<T>(
         if (!isDestructed) update()
     }
 
-    private var isTrackingModified: () -> Boolean = { false }
+    private var isTrackingModifiedIn: (CSStore) -> Boolean = { false }
     override fun trackModified(track: Boolean) = trackModifiedIf { track }
 
-    /** Counts this property in its preset's modified state while [condition] holds. */
-    fun trackModifiedIf(condition: () -> Boolean) = apply { isTrackingModified = condition }
+    /**
+     * Counts this property in its preset's modified state when compared with a store [condition]
+     * accepts, which is the preset's item store or the data its parent stored for it.
+     */
+    fun trackModifiedIf(condition: (comparedStore: CSStore) -> Boolean) =
+        apply { isTrackingModifiedIn = condition }
 
     override fun isTrackedModifiedIn(store: CSStore): Boolean =
-        if (isTrackingModified()) isModifiedIn(store) else false
+        if (isTrackingModifiedIn(store)) isModifiedIn(store) else false
 
     val isStored get() = get(store) != null
 }

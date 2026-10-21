@@ -9,6 +9,10 @@ interface CSPresetItemList<PresetItem : CSPresetItem>
     fun items(category: String): List<PresetItem>
     val items: List<PresetItem>
     fun remove(item: PresetItem)
+
+    /** Fires with each removed item, so every preset showing it is left without it. */
+    val eventRemove: CSEvent<PresetItem>
+
     fun createItem(title: String, category: String): PresetItem
     val eventReload: CSEvent<Unit>
     fun reload()

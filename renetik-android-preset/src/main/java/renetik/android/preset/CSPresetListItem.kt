@@ -43,16 +43,17 @@ class CSPresetListItem<
                 it.eventChanged.paused { property.saveTo(it) }
             else property.update()
         }
+        this + preset.list.eventRemove.listen(::onItemRemoved)
     }
 
     /** Whether the stored id has no item in the list, so the preset holds only its own data. */
     val isNotFound: Boolean get() = value == notFoundItem
 
-    /** The id to store, which stays as loaded while its item is not found. */
-    private val storedId: String
+    /** The id this preset links, which stays as loaded or linked while its item is not found. */
+    val linkedId: String
         get() = if (isNotFound) parentStore.getString(key) ?: value.toId() else value.toId()
 
-    override fun saveTo(store: CSStore) = store.set(key, storedId)
+    override fun saveTo(store: CSStore) = store.set(key, linkedId)
     override fun clearKeyData() = property.clear()
     override fun clear() = property.clear()
     override fun onStoreLoaded() = Unit
@@ -60,8 +61,14 @@ class CSPresetListItem<
     /** Takes the list's current instance of the selected item, which may hold newer saved data. */
     fun refreshItem() = property.refreshItem()
 
-    /** A removed selected item leaves the preset not found, with its data and stored id. */
-    fun onItemRemoved(item: PresetItem) {
+    /** Selects the item with [id], or keeps linking [id] without an item while the list has none. */
+    fun link(id: String) {
+        value = preset.list.find { it.id == id } ?: notFoundItem
+        if (isNotFound) parentStore.set(key, id)
+    }
+
+    /** A removed selected item leaves the preset not found, with its data and linked id. */
+    private fun onItemRemoved(item: PresetItem) {
         if (value == item) property.update()
     }
 
@@ -70,7 +77,7 @@ class CSPresetListItem<
     })
 
     override fun isTrackedModifiedIn(store: CSStore) =
-        if (store.has(key)) storedId != store.getString(key)
+        if (store.has(key)) linkedId != store.getString(key)
         else currentId.value != getDefaultItem().id
 
     private fun getDefaultItem(): PresetItem =

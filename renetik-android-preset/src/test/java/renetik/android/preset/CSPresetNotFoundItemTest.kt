@@ -100,12 +100,27 @@ class CSPresetNotFoundItemTest {
     }
 
     @Test
-    fun restoringTheNotFoundIdThroughCurrentIdLeavesThePresetNotFound() {
-        val notFoundId = child.listItem.currentId.value
+    fun linkingAnIdNotInTheListKeepsIt() = runTest {
+        val linkedId = child.listItem.linkedId
         child.listItem assign list.items.first()
 
-        child.listItem.currentId.value = notFoundId
+        child.listItem.link(linkedId)
+        preset.save(session)
 
+        assertEquals("copied", linkedId)
         assertTrue(child.listItem.isNotFound)
+        assertEquals(linkedId, session.store.getString(child.listItem.key))
+    }
+
+    @Test
+    fun deletingAnItemLeavesEveryPresetShowingItNotFound() = runTest {
+        val other = CSPreset(parent, CSJsonObjectStore(), "other", list, { NotFoundPresetItem() })
+            .manageItems().init()
+        other.listItem assign session
+
+        preset.delete(session)
+
+        assertTrue(other.listItem.isNotFound)
+        assertEquals(session.id, other.listItem.linkedId)
     }
 }
