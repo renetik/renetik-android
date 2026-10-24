@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.text.InputFilter
+import android.text.method.PasswordTransformationMethod
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -91,6 +92,24 @@ val <T : TextInputLayout> T.eventClear
 
 fun <T : TextInputLayout> T.onClear(listener: () -> Unit): T = apply {
     eventClear.listen(listener)
+}
+
+/** Shows or hides the password from the start icon, which leaves the end icon to [withClear]. */
+@SuppressLint("PrivateResource")
+fun <T : TextInputLayout> T.withPasswordToggle(): T = apply {
+    val passwordEdit = editText!!
+    fun showPassword(isShown: Boolean) {
+        passwordEdit.transformationMethod =
+            if (isShown) null else PasswordTransformationMethod.getInstance()
+        passwordEdit.setSelection(passwordEdit.length())
+        setStartIconDrawable(
+            if (isShown) com.google.android.material.R.drawable.design_ic_visibility_off
+            else com.google.android.material.R.drawable.design_ic_visibility)
+    }
+    showPassword(isShown = false)
+    setStartIconOnClickListener {
+        showPassword(isShown = passwordEdit.transformationMethod is PasswordTransformationMethod)
+    }
 }
 
 @SuppressLint("PrivateResource")
