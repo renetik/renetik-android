@@ -94,17 +94,18 @@ fun <T : TextInputLayout> T.onClear(listener: () -> Unit): T = apply {
 }
 
 @SuppressLint("PrivateResource")
-fun <T : TextInputLayout> T.withClear(): TextInputLayout = apply {
+fun <T : TextInputLayout> T.withClear(): T = apply {
     var endIconDrawableToRestore: Drawable? = null
     var isEndIconVisibleToRestore: Boolean? = null
     var endIconModeToRestore: Int? = null
+    // The mode is set first in both directions, because setting it replaces the end icon drawable.
     fun restoreState() {
+        endIconMode = endIconModeToRestore!!
+        endIconModeToRestore = null
         endIconDrawable = endIconDrawableToRestore
         endIconDrawableToRestore = null
         isEndIconVisible = isEndIconVisibleToRestore!!
         isEndIconVisibleToRestore = null
-        endIconMode = endIconModeToRestore!!
-        endIconModeToRestore = null
         // Imposible to restore click listener if was set and
         // there was visual glitch if set to null
         setEndIconOnClickListener { editText!!.performClick() }
@@ -117,9 +118,9 @@ fun <T : TextInputLayout> T.withClear(): TextInputLayout = apply {
     }
 
     fun showClearIcon() {
+        endIconMode = END_ICON_CUSTOM
         setEndIconDrawable(androidx.appcompat.R.drawable.abc_ic_clear_material)
         isEndIconVisible = true
-        endIconMode = END_ICON_CUSTOM
         setEndIconOnClickListener {
 //            restoreState()
             text = ""
