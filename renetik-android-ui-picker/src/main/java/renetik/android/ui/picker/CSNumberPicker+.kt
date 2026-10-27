@@ -3,7 +3,6 @@ package renetik.android.ui.picker
 import android.widget.NumberPicker.FOCUS_BEFORE_DESCENDANTS
 import android.widget.NumberPicker.FOCUS_BLOCK_DESCENDANTS
 import com.shawnlin.numberpicker.NumberPicker
-import com.shawnlin.numberpicker.NumberPicker.ASCENDING
 import renetik.android.core.kotlin.asStringArray
 import renetik.android.core.kotlin.collections.hasItems
 import renetik.android.core.kotlin.collections.index
@@ -20,13 +19,9 @@ import renetik.android.ui.protocol.CSViewInterface
 fun CSViewInterface.numberPicker(viewId: Int) = view(viewId) as CSNumberPicker
 
 fun CSNumberPicker.index(property: CSProperty<Int>): CSRegistration {
-    val propertyRegistration = property.action {
-        index assign if (order == ASCENDING) it else it + 1
-    }
+    val propertyRegistration = property.action { index assign it }
     val indexRegistration = index.onChange {
-        propertyRegistration.paused {
-            property assign if (order == ASCENDING) it else it - 1
-        }
+        propertyRegistration.paused { property assign it }
     }
     return CSRegistration(propertyRegistration, indexRegistration)
 }

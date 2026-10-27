@@ -11,9 +11,6 @@ import renetik.android.ui.R
 
 /**
  * Number picker wheel view.
- *
- * TODO: consider replacing the underlying implementation with
- *  https://github.com/Carbs0126/NumberPickerView
  */
 class CSNumberPicker @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0

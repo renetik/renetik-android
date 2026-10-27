@@ -7,8 +7,8 @@ dependencies {
     implementation project(':renetik-android-ui')
     implementation project(':renetik-android-controller')
 
-    //https://github.com/ShawnLin013/NumberPicker
-    api 'io.github.ShawnLin013:number-picker:2.4.13'
+    //https://github.com/renetik/NumberPicker
+    api 'com.github.renetik:NumberPicker:2.5.1'
 
     testImplementation project(':renetik-android-testing')
 }

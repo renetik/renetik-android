@@ -1,6 +1,7 @@
 # Module renetik-android-ui-picker
 
-A number/value picker wheel built on ShawnLin013/NumberPicker.
+A number/value picker wheel built on renetik/NumberPicker 2.5.1, a fork of
+ShawnLin013/NumberPicker.
 
 # Package renetik.android.ui.picker
 

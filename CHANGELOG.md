@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+- `renetik-android-ui-picker` uses
+  [renetik/NumberPicker](https://github.com/renetik/NumberPicker) 2.5.1 in
+  place of ShawnLin013 NumberPicker 2.4.13. The wheel now changes its value at
+  half an item, where its snap turns, so `CSNumberPicker.index` changes once
+  for each item picked. Before, a drag released between two items could report
+  the value flipping back and forth, or a change after the scroll went idle.
+  The package stays `com.shawnlin.numberpicker`.
+- A descending wheel draws its value at the centre with any item count, and a
+  tap picks the item drawn under it. Before, a wheel with an even item count
+  drew the value minus one at the centre in descending order, and could ignore
+  a tap on the item next to the centre.
+- `CSNumberPicker.index(property)` keeps the picker's value equal to the
+  property in both orders; it no longer shifts a descending picker by one.
+
 ## 2.0.1 — 2026-07-06
 
 Publishing and repository layout cleanup after the 2.0 unification release:

@@ -5,10 +5,12 @@
 Part of [Renetik Android](https://github.com/renetik/renetik-android/).
 
 Number/value picker wheel built on
-[ShawnLin013/NumberPicker](https://github.com/ShawnLin013/NumberPicker), with
-Renetik Android property bindings and list loading helpers.
+[renetik/NumberPicker](https://github.com/renetik/NumberPicker) 2.5.1, a fork of
+ShawnLin013/NumberPicker, with Renetik Android property bindings and list
+loading helpers.
 
 - **`CSNumberPicker`**: picker wheel exposing selection as a `CSProperty<Int>`.
+  `index` changes once for each item the user picks.
 - **List loading**: display arbitrary row lists with `load(data, selected)`.
 - **Two-way binding**: keep picker position and `CSProperty<Int>` in sync with
   `index(property)`.
@@ -68,7 +70,8 @@ picker.index(selectedIndex)
 - **Renetik modules**: [Core](../renetik-android-core),
   [Event](../renetik-android-event), [UI](../renetik-android-ui),
   [Controller](../renetik-android-controller).
-- **External runtime**: ShawnLin013 NumberPicker `2.4.13`.
+- **External runtime**: [renetik/NumberPicker](https://github.com/renetik/NumberPicker)
+  `2.5.1`.
 - **Test scope**: [Testing](../renetik-android-testing).
 
 ### Related Renetik libraries
