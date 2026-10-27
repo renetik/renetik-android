@@ -9,6 +9,7 @@ import java.math.RoundingMode
 import java.math.RoundingMode.CEILING
 import java.math.RoundingMode.UP
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -44,6 +45,17 @@ inline fun Float.roundToDecimal(
 inline fun Float.formatDecimal(n: Int): String {
     return "%.${n}f".format(this)
 }
+
+/**
+ * With [minimum] to [maximum] decimals in the default locale, without grouping, rounded first so
+ * that zero never carries a sign.
+ */
+fun Float.formatDecimals(minimum: Int, maximum: Int = minimum): String =
+    NumberFormat.getInstance().apply {
+        minimumFractionDigits = minimum
+        maximumFractionDigits = maximum
+        isGroupingUsed = false
+    }.format(roundTo(maximum))
 
 //fun Float.roundTo(decimals: Int): Float =
 //    formatDecimal(decimals).toFloat()

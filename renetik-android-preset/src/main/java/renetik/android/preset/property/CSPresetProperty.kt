@@ -12,6 +12,8 @@ interface CSPresetProperty<T> : CSStoreProperty<T>, CSPresetKeyData {
     override fun clear() = super.clear()
 }
 
-fun <T : CSPresetProperty<*>> T.isModifiedIn(store: CSStore) = if (store.has(key))
-    value != get(store) else value != default
+/** The value [store] holds for this property, or its default when [store] holds none. */
+fun <T> CSPresetProperty<T>.valueIn(store: CSStore): T? = if (store.has(key)) get(store) else default
+
+fun <T : CSPresetProperty<*>> T.isModifiedIn(store: CSStore) = value != valueIn(store)
 

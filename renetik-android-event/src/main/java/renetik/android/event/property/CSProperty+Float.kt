@@ -1,13 +1,13 @@
 package renetik.android.event.property
 
-fun CSProperty<Float>.min(value: Float) = apply {
+fun <P : CSProperty<Float>> P.min(value: Float): P = apply {
     if (this.value < value) this.value(value, fire = false)
 }
 
-fun CSProperty<Float>.max(value: Float) = apply {
+fun <P : CSProperty<Float>> P.max(value: Float): P = apply {
     if (this.value > value) this.value(value, fire = false)
 }
 
-fun CSProperty<Float>.range(range: ClosedRange<Float>) = apply {
+fun <P : CSProperty<Float>> P.range(range: ClosedRange<Float>): P = apply {
     min(range.start).max(range.endInclusive)
 }

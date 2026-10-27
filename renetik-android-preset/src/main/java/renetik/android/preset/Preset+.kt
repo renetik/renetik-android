@@ -159,11 +159,19 @@ fun <T : Preset> T.onChange(
 
 fun Preset.isModified(
     parent: CSHasRegistrationsHasDestruct
-): CSHasChangeValue<Boolean> {
-    val property = property(isModified)
+): CSHasChangeValue<Boolean> = modifiedState(parent) { it }
+
+/**
+ * [state] computed with [CSPreset.isModified] after the same debounced changes, so a state that
+ * changes while the preset stays modified still updates and never disagrees with [isModified].
+ */
+fun <T> Preset.modifiedState(
+    parent: CSHasRegistrationsHasDestruct, state: (isModified: Boolean) -> T
+): CSHasChangeValue<T> {
+    val property = property(state(isModified))
     val registration = this + CSRegistrationsMap(className).apply {
         val update = debouncer(500.milliseconds) {
-            property.value(isModified)
+            property.value(state(isModified))
         }
         val storeOnChange = this + store.onChange { update() }
         this + onBeforeChange { storeOnChange.pause() }
