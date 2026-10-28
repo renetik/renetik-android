@@ -15,6 +15,13 @@
   a tap on the item next to the centre.
 - `CSNumberPicker.index(property)` keeps the picker's value equal to the
   property in both orders; it no longer shifts a descending picker by one.
+- `CSWindowProfile` and `Context.windowProfile` describe the window size from
+  the resources configuration. `Context.isPortrait`, `isLandscape`, `isTablet`
+  and `isPhone` now read from it; orientation comes from the window width and
+  height. `CSWindowProfile.landscape` gives the window turned to landscape,
+  with the smallest width as its height. `Context.isScreenWide` is removed.
+- `TextView.hideEndDrawableOnSmallWidth` is removed; it hid the drawable by
+  device type, not by the width it has.
 
 ## 2.0.1 — 2026-07-06
 
