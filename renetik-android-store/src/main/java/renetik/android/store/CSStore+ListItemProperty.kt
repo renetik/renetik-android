@@ -94,3 +94,15 @@ fun <T> CSStore.property(
     parent: CSHasDestruct, key: String, getValues: () -> List<T>, defaultIndex: Int = 0,
     onChange: ArgFun<T>? = null
 ) = property(parent, key, getValues, getDefault = { getValues()[defaultIndex] }, onChange)
+
+inline fun <reified T : Enum<T>> CSStore.property(
+    key: String, default: T, noinline onChange: ArgFun<T>? = null
+) = property(key, enumValues<T>(), default, onChange)
+
+inline fun <reified T : Enum<T>> CSStore.dataProperty(
+    key: String, default: T, noinline onChange: ArgFun<T>? = null
+) = property(key, default, onChange).listenLoadOnce()
+
+inline fun <reified T : Enum<T>> CSStore.property(
+    parent: CSHasDestruct, key: String, default: T, noinline onChange: ArgFun<T>? = null
+) = property(parent, key, enumValues<T>(), default, onChange)
