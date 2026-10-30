@@ -40,10 +40,15 @@ abstract class CSPresetPropertyBase<T>(
 
     override fun toString() = "key:$key ${super.toString()}"
 
+    private var isFollowingOnlyStored = false
+
+    /** Keeps the current value when a loaded preset does not store this property. */
+    fun followPresetOnlyIfStored() = apply { isFollowingOnlyStored = true }
+
     override fun onStoreLoaded() {
         // Write test to see how this should work I cant simulate where this make difference difference
 //        if (isFollowPreset.isTrue) update()
-        if (isFollowPreset.isFalse)
+        if (isFollowPreset.isFalse || isFollowingOnlyStored && !isStored)
             store.eventChanged.paused { saveTo(store) }
         else update()
     }

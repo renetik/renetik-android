@@ -36,6 +36,18 @@ class ValuePresetPropertyTest {
         assertEquals("initial", value)
     }
 
+    @Test
+    fun testPropertyFollowingPresetOnlyIfStored() {
+        val property = preset.property(parent, "key", default = 1).followPresetOnlyIfStored()
+        property.value = 5
+
+        preset.reload(mapOf())
+        assertEquals(5, property.value)
+
+        preset.reload(mapOf("key" to "7"))
+        assertEquals(7, property.value)
+    }
+
 //    @Test
 //    fun testBooleanProperty() {
 //        var value: Boolean by preset.property(parent, "key", default = false)
