@@ -116,9 +116,10 @@ class CSPreset<PresetListItem : CSPresetItem,
     fun reload(data: Map<String, Any?>) {
         eventLoadData(listItem.value)
         store.reload(data)
-        store.save()
         properties.toList().forEach { if (!it.isDestructed) it.onStoreLoaded() }
         presets.toList().forEach { if (!it.isDestructed) it.store.onStoreLoaded() }
+        // Saved last, as loading writes values the data does not store.
+        store.save()
     }
 
     suspend fun saveAsCurrent() = save(listItem.value)

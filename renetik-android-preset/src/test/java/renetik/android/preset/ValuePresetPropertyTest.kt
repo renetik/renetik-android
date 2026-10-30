@@ -11,6 +11,7 @@ import renetik.android.preset.model.NotFoundPresetItem
 import renetik.android.preset.model.TestCSPresetItemList
 import renetik.android.preset.model.manageItems
 import renetik.android.store.type.CSJsonObjectStore
+import renetik.android.store.type.CSJsonObjectStore.Companion.CSJsonObjectStore
 
 @RunWith(RobolectricTestRunner::class)
 class ValuePresetPropertyTest {
@@ -46,6 +47,17 @@ class ValuePresetPropertyTest {
 
         preset.reload(mapOf("key" to "7"))
         assertEquals(7, property.value)
+    }
+
+    @Test
+    fun testPropertyKeptOnItemReloadIsSavedToParentStore() {
+        val property = preset.property(parent, "key", default = 1).followPresetOnlyIfStored()
+        property.value = 5
+
+        preset.reloadInternal()
+        assertEquals(5, property.value)
+        val savedPresetStore = CSJsonObjectStore(store.getMap(preset.store.key)!!)
+        assertEquals(5, savedPresetStore.getInt("key"))
     }
 
 //    @Test
