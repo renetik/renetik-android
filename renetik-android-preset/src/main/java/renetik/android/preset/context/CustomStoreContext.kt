@@ -130,6 +130,11 @@ class CustomStoreContext(
     ) = add(store.nullListItemProperty(storeKey(key), values,
         default, onChange).parent(this).listenLoad())
 
+    override fun <T> nullListItemProperty(
+        key: String, values: List<T>, getDefault: () -> T?, onChange: ((value: T?) -> Unit)?
+    ) = add(store.nullListItemProperty(storeKey(key), { values },
+        getDefault, onChange).parent(this).listenLoad())
+
     override fun property(
         key: String, default: List<Int>, onChange: ArgFun<List<Int>>?
     ) = add(CSIntListValueStoreProperty(store, storeKey(key),

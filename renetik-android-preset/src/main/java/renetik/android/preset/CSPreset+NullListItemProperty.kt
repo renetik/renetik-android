@@ -11,6 +11,12 @@ fun <T> Preset.nullListItemProperty(
     key, values, default, onChange))
 
 fun <T> Preset.nullListItemProperty(
+    parent: CSHasRegistrationsHasDestruct, key: String, values: List<T>,
+    getDefault: () -> T?, onChange: ((value: T?) -> Unit)? = null
+) = add(CSListItemNullablePresetProperty(parent, this,
+    key, { values }, getDefault, onChange))
+
+fun <T> Preset.nullListItemProperty(
     parent: CSHasRegistrationsHasDestruct, key: String, getValues: () -> List<T>,
     default: T? = null, onChange: ((value: T?) -> Unit)? = null
 ) = add(CSListItemNullablePresetProperty(parent, this,

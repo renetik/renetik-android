@@ -179,6 +179,12 @@ class PresetStoreContext(
         this, storeKey(key), values, default, onChange
     ))
 
+    override fun <T> nullListItemProperty(
+        key: String, values: List<T>, getDefault: () -> T?, onChange: ((value: T?) -> Unit)?
+    ): CSListItemNullablePresetProperty<T?> = add(key, preset.nullListItemProperty(
+        this, storeKey(key), values, getDefault = getDefault, onChange
+    ))
+
     override fun property(
         key: String, default: List<Int>, onChange: ArgFun<List<Int>>?
     ): CSIntListValuePresetProperty = add(key, preset.property(

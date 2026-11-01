@@ -76,6 +76,11 @@ interface CSStoreContext
         onChange: ((value: T?) -> Unit)? = null
     ): CSStoreProperty<T?>
 
+    fun <T> nullListItemProperty(
+        key: String, values: List<T>, getDefault: () -> T?,
+        onChange: ((value: T?) -> Unit)? = null
+    ): CSStoreProperty<T?>
+
     fun property(
         key: String, default: List<Int>, onChange: ArgFun<List<Int>>? = null
     ): CSStoreProperty<List<Int>>
