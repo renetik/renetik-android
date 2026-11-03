@@ -98,9 +98,8 @@ class CSGridView<ItemType : Any,
 
     private fun ViewType.updateSelection() {
         if (!isLoaded) return
-        isActivated = selectedItem.value == value
-        if (isActivated) contentView.isClickable = eventItemReSelected.isListened
-        else contentView.isClickable = true
+        isSelected = selectedItem.value == value
+        contentView.isClickable = !isSelected || eventItemReSelected.isListened
     }
 
     private fun CSGridItemView<ItemType>.updateDisabled() {
