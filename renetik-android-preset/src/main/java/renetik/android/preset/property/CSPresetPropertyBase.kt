@@ -40,7 +40,8 @@ abstract class CSPresetPropertyBase<T>(
 
     override fun toString() = "key:$key ${super.toString()}"
 
-    private var isFollowingOnlyStored = false
+    var isFollowingOnlyStored = false
+        private set
 
     /** Keeps the current value when a loaded preset does not store this property. */
     fun followPresetOnlyIfStored() = apply { isFollowingOnlyStored = true }
