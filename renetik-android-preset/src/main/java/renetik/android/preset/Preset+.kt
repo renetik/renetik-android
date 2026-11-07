@@ -31,6 +31,7 @@ fun <PresetListItem : CSPresetItem,
         Preset : CSPreset<PresetListItem, PresetList>>
         Preset.init(): Preset = apply {
     if (store.data.isEmpty()) reloadInternal()
+    else if (overrides.isEnabled) overrides.onCreatedWithData()
 }
 
 fun <T : Preset> T.followStoreIf(property: CSProperty<Boolean>) =

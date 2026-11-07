@@ -34,7 +34,7 @@ class CSPresetStore(
             val data = parentStore.getMap(key)
 //            if (this.data == data) return
             if (data.isNullOrEmpty()) preset.reloadInternal()
-            else preset.reload(data)
+            else preset.reloadStored(data)
         }
     }
 

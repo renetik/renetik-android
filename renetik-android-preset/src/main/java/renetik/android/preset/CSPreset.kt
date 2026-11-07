@@ -54,6 +54,7 @@ class CSPreset<PresetListItem : CSPresetItem,
 
     val store = CSPresetStore(this)
     val listItem = CSPresetListItem(this, notFoundItem, defaultItemId)
+    val overrides = CSPresetOverrides(this)
     val title = property(this, PresetTitleKey, getDefault = { listItem.value.title.value })
         .trackModified()
     val itemTitle = listItem.delegate(this, fromValueChild = { it.title })
@@ -74,7 +75,7 @@ class CSPreset<PresetListItem : CSPresetItem,
     private fun isModifiedIn(store: CSStore): Boolean =
         properties.any { it.isTrackedModifiedIn(store) } || presets.any {
             store.getMap(it.store.key)?.let { data ->
-                it.isModifiedIn(CSJsonObjectStore(data))
+                it.isModifiedIn(CSJsonObjectStore(it.overrides.fullData(data)))
             } ?: it.isModifiedIn(it.listItem.value.store)
         }
 
@@ -87,9 +88,9 @@ class CSPreset<PresetListItem : CSPresetItem,
 
     private fun add(preset: CSPreset<*, *>) {
         if (preset in presets) unexpected()
+        preset.overrides.parent = this
         preset + isReloadInternal.onChange { preset.isReloadInternal.value = it }
         add(preset.listItem)
-//        add(preset.store)
         presets += preset
         preset.eventDestruct { presets -= preset }
     }
@@ -120,6 +121,12 @@ class CSPreset<PresetListItem : CSPresetItem,
         presets.toList().forEach { if (!it.isDestructed) it.store.onStoreLoaded() }
         // Saved last, as loading writes values the data does not store.
         store.save()
+        overrides.onLoaded()
+    }
+
+    fun reloadStored(stored: Map<String, Any?>) {
+        overrides.onLoadStored(stored)
+        reload(overrides.fullData(stored))
     }
 
     suspend fun saveAsCurrent() = save(listItem.value)
