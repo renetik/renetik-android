@@ -9,6 +9,7 @@ import renetik.android.json.CSJson
 import renetik.android.json.parseJsonMap
 import renetik.android.json.toJson
 import java.io.File
+import java.util.Collections.synchronizedMap
 
 class CSSimpleFileJsonStore(
     val file: File,
@@ -25,9 +26,12 @@ class CSSimpleFileJsonStore(
         )
     }
 
+    // Synchronized, so a save on another thread can copy it while properties change.
     override val data: MutableMap<String, Any?> =
-        file.readString()?.parseJsonMap() ?: mutableMapOf()
+        synchronizedMap(file.readString()?.parseJsonMap() ?: mutableMapOf())
 
-    fun save() = file.write(data.changeIf(isJsonPretty) { toSortedMap() }
-        .toJson(formatted = isJsonPretty))
+    fun snapshotJson(): String = synchronized(data) { data.toMap() }
+        .changeIf(isJsonPretty) { toSortedMap() }.toJson(formatted = isJsonPretty)
+
+    fun save() = file.write(snapshotJson())
 }
