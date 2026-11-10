@@ -140,6 +140,11 @@ class CustomStoreContext(
     ) = add(CSIntListValueStoreProperty(store, storeKey(key),
         default, onChange).parent(this).listenLoad())
 
+    override fun intListProperty(
+        key: String, getDefault: () -> List<Int>, onChange: ArgFun<List<Int>>?
+    ) = add(CSIntListValueStoreProperty(store, storeKey(key),
+        getDefault, onChange).parent(this).listenLoad())
+
     override fun <T : CSHasId> property(
         key: String, values: List<T>,
         default: List<T>, onChange: ArgFun<List<T>>?

@@ -53,6 +53,11 @@ fun Preset.property(
     default: List<Int>, onChange: ArgFun<List<Int>>? = null
 ) = add(CSIntListValuePresetProperty(parent, this, key, default, onChange))
 
+fun Preset.intListProperty(
+    parent: CSHasDestruct, key: String,
+    getDefault: () -> List<Int>, onChange: ArgFun<List<Int>>? = null
+) = add(CSIntListValuePresetProperty(parent, this, key, getDefault, onChange))
+
 fun <T> Preset.property(
     parent: CSHasDestruct, key: String, values: List<T>,
     default: T, onChange: ArgFun<T>? = null

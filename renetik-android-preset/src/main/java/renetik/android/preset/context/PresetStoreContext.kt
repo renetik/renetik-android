@@ -9,6 +9,7 @@ import renetik.android.event.lifecycle.CSModel
 import renetik.android.json.obj.CSJsonObjectInterface
 import renetik.android.preset.CSPreset
 import renetik.android.preset.Preset
+import renetik.android.preset.intListProperty
 import renetik.android.preset.nullDoubleProperty
 import renetik.android.preset.nullFloatProperty
 import renetik.android.preset.nullIntProperty
@@ -189,6 +190,12 @@ class PresetStoreContext(
         key: String, default: List<Int>, onChange: ArgFun<List<Int>>?
     ): CSIntListValuePresetProperty = add(key, preset.property(
         this, storeKey(key), default, onChange
+    ))
+
+    override fun intListProperty(
+        key: String, getDefault: () -> List<Int>, onChange: ArgFun<List<Int>>?
+    ): CSIntListValuePresetProperty = add(key, preset.intListProperty(
+        this, storeKey(key), getDefault, onChange
     ))
 
     override fun <T : CSHasId> property(
