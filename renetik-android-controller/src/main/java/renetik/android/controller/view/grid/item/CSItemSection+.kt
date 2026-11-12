@@ -31,11 +31,11 @@ fun <Item> MutableList<Pair<CSSectionItem<CSItemSection<Item>, Item>, Int>>.load
     section: CSItemSection<Item>, index: Int,
     filter: ((items: Collection<Item>) -> Collection<Item>)? = null
 ) {
-    if (section.items.isEmpty())
+    val visibleItems = filter?.invoke(section.items) ?: section.items
+    if (visibleItems.isEmpty())
         this += CSSectionItem<CSItemSection<Item>, Item>(
             section, index) to ItemSectionEmptyViewId
-    else (filter?.invoke(section.items)
-        ?: section.items).forEachIndexed { itemIndex, item ->
+    else visibleItems.forEachIndexed { itemIndex, item ->
         this += CSSectionItem(section, itemIndex, item) to ItemViewId
     }
 }
