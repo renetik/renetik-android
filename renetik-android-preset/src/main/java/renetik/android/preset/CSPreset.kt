@@ -46,6 +46,9 @@ class CSPreset<PresetListItem : CSPresetItem,
     val isReloadInternal = property(false)
     val eventLoad = event<PresetListItem>()
     val eventLoadData = event<PresetListItem>()
+
+    /** Fires once [reload] loaded data, with the data the store then holds. */
+    val eventDataLoaded = event<Map<String, Any?>>()
     val eventSave = suspendEvent<PresetListItem>()
     val eventChange = event<PresetListItem>()
     val eventDelete = suspendEvent<PresetListItem>()
@@ -122,6 +125,7 @@ class CSPreset<PresetListItem : CSPresetItem,
         // Saved last, as loading writes values the data does not store.
         store.save()
         overrides.onLoaded()
+        eventDataLoaded(store.data)
     }
 
     fun reloadStored(stored: Map<String, Any?>) {
