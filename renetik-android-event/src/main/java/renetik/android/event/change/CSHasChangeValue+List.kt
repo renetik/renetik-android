@@ -2,7 +2,7 @@
 
 package renetik.android.event.change
 
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.ArgFun
 import renetik.android.event.registration.CSHasRegistrations
 import renetik.android.event.registration.CSRegistration
@@ -14,7 +14,7 @@ import renetik.android.event.registration.registerTo
 
 inline fun <T : CSHasChangeValue<Value>, Value> List<T>.onChange(
     crossinline function: ArgFun<List<Value>>
-): CSRegistration = CSRegistrationsMap(className).also { registrations ->
+): CSRegistration = CSRegistrationsMap(debugClassName).also { registrations ->
     forEach { item: CSHasChangeValue<Value> ->
         registrations + item.onChange {
             if (registrations.isActive) function(map { it.value })

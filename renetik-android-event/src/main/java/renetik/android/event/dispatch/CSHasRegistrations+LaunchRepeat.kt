@@ -3,7 +3,7 @@ package renetik.android.event.dispatch
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.event.registration.CSHasRegistrations
 import renetik.android.event.registration.CSRegistration
 import renetik.android.event.registration.CSRegistration.Companion.CSRegistration
@@ -24,7 +24,7 @@ fun CSHasRegistrations.launchRepeat(
     lateinit var registration: CSRegistration
     fun launch() {
         job?.cancel()
-        job = dispatcher.launch(className) { jobRegistration ->
+        job = dispatcher.launch(debugClassName) { jobRegistration ->
             if (after > ZERO) delay(after)
             while (!registration.isCanceled && registration.isActive &&
                 jobRegistration.isActive) {

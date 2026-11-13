@@ -2,7 +2,7 @@
 
 package renetik.android.event.change
 
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.tuples.CSQuadruple
 import renetik.android.core.lang.tuples.CSQuintuple
 import renetik.android.core.lang.tuples.CSSixtuple
@@ -286,7 +286,7 @@ fun <Argument1, Argument2, Item1, Item2> Pair<Item1, Item2>.onUnsafeChange(
 ): CSRegistration
         where Item1 : CSHasChangeValue<Argument1>,
               Item2 : CSSafeHasChangeValue<Argument2> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.unsafeChangeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.unsafeChangeSource(),
         onUnsafeChange)
 
 @JvmName("onUnsafeChangeWithSafeThird")
@@ -298,7 +298,7 @@ fun <Argument1, Argument2, Argument3, Item1, Item2, Item3>
         where Item1 : CSHasChangeValue<Argument1>,
               Item2 : CSHasChangeValue<Argument2>,
               Item3 : CSSafeHasChangeValue<Argument3> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.changeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.changeSource(),
         third.unsafeChangeSource(), onUnsafeChange)
 
 @JvmName("onUnsafeChangeWithSafeFourth")
@@ -312,7 +312,7 @@ fun <Argument1, Argument2, Argument3, Argument4,
               Item2 : CSHasChangeValue<Argument2>,
               Item3 : CSHasChangeValue<Argument3>,
               Item4 : CSSafeHasChangeValue<Argument4> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.changeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.changeSource(),
         third.changeSource(), fourth.unsafeChangeSource(), onUnsafeChange)
 
 @JvmName("onUnsafeChangeWithSafeFifth")
@@ -327,7 +327,7 @@ fun <Argument1, Argument2, Argument3, Argument4, Argument5,
               Item3 : CSHasChangeValue<Argument3>,
               Item4 : CSHasChangeValue<Argument4>,
               Item5 : CSSafeHasChangeValue<Argument5> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.changeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.changeSource(),
         third.changeSource(), fourth.changeSource(), fifth.unsafeChangeSource(), onUnsafeChange)
 
 @JvmName("onUnsafeChangeWithSafeSixth")
@@ -345,7 +345,7 @@ fun <Argument1, Argument2, Argument3, Argument4, Argument5, Argument6,
               Item4 : CSHasChangeValue<Argument4>,
               Item5 : CSHasChangeValue<Argument5>,
               Item6 : CSSafeHasChangeValue<Argument6> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.changeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.changeSource(),
         third.changeSource(), fourth.changeSource(), fifth.changeSource(), sixth.unsafeChangeSource(),
         onUnsafeChange)
 
@@ -356,7 +356,7 @@ fun <Argument1, Argument2, Item1, Item2> Pair<Item1, Item2>.onUnsafeChange(
 ): CSRegistration
         where Item1 : CSSafeHasChangeValue<Argument1>,
               Item2 : CSSafeHasChangeValue<Argument2> =
-    onUnsafeChangeSerialized(this.className, delivery, first.unsafeChangeSource(), second.unsafeChangeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.unsafeChangeSource(), second.unsafeChangeSource(),
         onUnsafeChange)
 
 @JvmName("onUnsafeChangeWith3Safe2")
@@ -368,7 +368,7 @@ fun <Argument1, Argument2, Argument3, Item1, Item2, Item3>
         where Item1 : CSHasChangeValue<Argument1>,
               Item2 : CSSafeHasChangeValue<Argument2>,
               Item3 : CSSafeHasChangeValue<Argument3> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.unsafeChangeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.unsafeChangeSource(),
         third.unsafeChangeSource(), onUnsafeChange)
 
 @JvmName("onUnsafeChangeWith4Safe2")
@@ -382,7 +382,7 @@ fun <Argument1, Argument2, Argument3, Argument4,
               Item2 : CSHasChangeValue<Argument2>,
               Item3 : CSSafeHasChangeValue<Argument3>,
               Item4 : CSSafeHasChangeValue<Argument4> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.changeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.changeSource(),
         third.unsafeChangeSource(), fourth.unsafeChangeSource(), onUnsafeChange)
 
 @JvmName("onUnsafeChangeWith5Safe2")
@@ -397,7 +397,7 @@ fun <Argument1, Argument2, Argument3, Argument4, Argument5,
               Item3 : CSHasChangeValue<Argument3>,
               Item4 : CSSafeHasChangeValue<Argument4>,
               Item5 : CSSafeHasChangeValue<Argument5> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.changeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.changeSource(),
         third.changeSource(), fourth.unsafeChangeSource(), fifth.unsafeChangeSource(), onUnsafeChange)
 
 @JvmName("onUnsafeChangeWith6Safe2")
@@ -415,7 +415,7 @@ fun <Argument1, Argument2, Argument3, Argument4, Argument5, Argument6,
               Item4 : CSHasChangeValue<Argument4>,
               Item5 : CSSafeHasChangeValue<Argument5>,
               Item6 : CSSafeHasChangeValue<Argument6> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.changeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.changeSource(),
         third.changeSource(), fourth.changeSource(), fifth.unsafeChangeSource(), sixth.unsafeChangeSource(),
         onUnsafeChange)
 
@@ -428,7 +428,7 @@ fun <Argument1, Argument2, Argument3, Item1, Item2, Item3>
         where Item1 : CSSafeHasChangeValue<Argument1>,
               Item2 : CSSafeHasChangeValue<Argument2>,
               Item3 : CSSafeHasChangeValue<Argument3> =
-    onUnsafeChangeSerialized(this.className, delivery, first.unsafeChangeSource(), second.unsafeChangeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.unsafeChangeSource(), second.unsafeChangeSource(),
         third.unsafeChangeSource(), onUnsafeChange)
 
 @JvmName("onUnsafeChangeWith4Safe3")
@@ -442,7 +442,7 @@ fun <Argument1, Argument2, Argument3, Argument4,
               Item2 : CSSafeHasChangeValue<Argument2>,
               Item3 : CSSafeHasChangeValue<Argument3>,
               Item4 : CSSafeHasChangeValue<Argument4> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.unsafeChangeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.unsafeChangeSource(),
         third.unsafeChangeSource(), fourth.unsafeChangeSource(), onUnsafeChange)
 
 @JvmName("onUnsafeChangeWith5Safe3")
@@ -457,7 +457,7 @@ fun <Argument1, Argument2, Argument3, Argument4, Argument5,
               Item3 : CSSafeHasChangeValue<Argument3>,
               Item4 : CSSafeHasChangeValue<Argument4>,
               Item5 : CSSafeHasChangeValue<Argument5> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.changeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.changeSource(),
         third.unsafeChangeSource(), fourth.unsafeChangeSource(), fifth.unsafeChangeSource(), onUnsafeChange)
 
 @JvmName("onUnsafeChangeWith6Safe3")
@@ -475,7 +475,7 @@ fun <Argument1, Argument2, Argument3, Argument4, Argument5, Argument6,
               Item4 : CSSafeHasChangeValue<Argument4>,
               Item5 : CSSafeHasChangeValue<Argument5>,
               Item6 : CSSafeHasChangeValue<Argument6> =
-    onUnsafeChangeSerialized(this.className, delivery, first.changeSource(), second.changeSource(),
+    onUnsafeChangeSerialized(this.debugClassName, delivery, first.changeSource(), second.changeSource(),
         third.changeSource(), fourth.unsafeChangeSource(), fifth.unsafeChangeSource(),
         sixth.unsafeChangeSource(),
         onUnsafeChange)

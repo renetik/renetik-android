@@ -1,7 +1,7 @@
 package renetik.android.preset
 
 import renetik.android.core.kotlin.changeIf
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.Fun
 import renetik.android.core.lang.tuples.to
 import renetik.android.core.lang.value.isTrue
@@ -170,7 +170,7 @@ fun <T> Preset.modifiedState(
     parent: CSHasRegistrationsHasDestruct, state: (isModified: Boolean) -> T
 ): CSHasChangeValue<T> {
     val property = property(state(isModified))
-    val registration = this + CSRegistrationsMap(className).apply {
+    val registration = this + CSRegistrationsMap(debugClassName).apply {
         val update = debouncer(500.milliseconds) {
             property.value(state(isModified))
         }

@@ -5,7 +5,7 @@ package renetik.android.event.change
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.Main
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.value.CSSafeValue
 import renetik.android.core.lang.value.CSValue
 import renetik.android.event.change.CSHasChangeValue.Companion.emptyNullable
@@ -96,7 +96,7 @@ inline fun <T> CSHasChangeValue<T>.action(noinline function: (T) -> Unit): CSReg
 inline fun <T> CSHasChangeValue<T>.actionLaunch(
     dispatcher: CoroutineDispatcher = Main,
     crossinline function: suspend (T) -> Unit): CSRegistration {
-    val registrations = CSRegistrationsMap(className)
+    val registrations = CSRegistrationsMap(debugClassName)
     registrations + action { param ->
         registrations.launch(dispatcher) { function(param) }
     }
@@ -106,7 +106,7 @@ inline fun <T> CSHasChangeValue<T>.actionLaunch(
 inline fun <T> CSHasChangeValue<T>.actionLaunch(
     key: String, dispatcher: CoroutineDispatcher = Main,
     crossinline function: suspend (T) -> Unit): CSRegistration {
-    val registrations = CSRegistrationsMap(className)
+    val registrations = CSRegistrationsMap(debugClassName)
     registrations + action { param ->
         registrations.launch(key, dispatcher) { function(param) }
     }

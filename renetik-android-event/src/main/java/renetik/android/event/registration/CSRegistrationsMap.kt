@@ -1,7 +1,7 @@
 package renetik.android.event.registration
 
 import androidx.annotation.AnyThread
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.kotlin.collections.removeValue
 import renetik.android.core.kotlin.primitives.isTrue
 import renetik.android.core.lang.CSLeakCanary.expectWeaklyReachable
@@ -153,6 +153,6 @@ class CSRegistrationsMap(val id: String) : CSRegistrations, CSHasRegistrations {
         map.onEach { it.value.cancel() }.clear()
         isCanceled = true
         eventCancel.fire().clear()
-        expectWeaklyReachable { "$className $this cancel" }
+        expectWeaklyReachable { "$debugClassName $this cancel" }
     }
 }

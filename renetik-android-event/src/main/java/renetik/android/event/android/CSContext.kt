@@ -2,7 +2,7 @@ package renetik.android.event.android
 
 import android.content.Context
 import android.content.ContextWrapper
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.CSEnvironment.app
 import renetik.android.core.lang.CSLeakCanary.expectWeaklyReachable
 import renetik.android.core.logging.CSLog.logErrorTrace
@@ -30,7 +30,7 @@ abstract class CSContext : ContextWrapper, CSHasContext {
 
     // Returning wrapped context as there is no use of this wrapped in child anywhere....
     final override val context: Context get() = baseContext
-    final override val registrations = CSRegistrationsMap(className)
+    final override val registrations = CSRegistrationsMap(debugClassName)
     final override val eventDestruct = event<Unit>()
     @Volatile final override var isDestructed = false
         private set
@@ -43,6 +43,6 @@ abstract class CSContext : ContextWrapper, CSHasContext {
         isDestructed = true
         registrations.cancel()
         eventDestruct.fire().clear()
-        expectWeaklyReachable { "$className $this onDestruct" }
+        expectWeaklyReachable { "$debugClassName $this onDestruct" }
     }
 }

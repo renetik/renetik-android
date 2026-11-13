@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Binder
 import android.os.IBinder
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.CSLeakCanary.expectWeaklyReachable
 import renetik.android.core.lang.variable.CSWeakVariable.Companion.weak
 import renetik.android.core.logging.CSLog.logWarnTrace
@@ -40,7 +40,7 @@ abstract class CSService : Service(), CSHasRegistrationsHasDestruct {
     private val binder by lazy { CSServiceBinder(this) }
     override fun onBind(intent: Intent) = binder
 
-    final override val registrations = CSRegistrationsMap(className)
+    final override val registrations = CSRegistrationsMap(debugClassName)
     final override val eventDestruct = event<Unit>()
     @Volatile final override var isDestructed = false
         private set
@@ -52,7 +52,7 @@ abstract class CSService : Service(), CSHasRegistrationsHasDestruct {
         isDestructed = true
         registrations.cancel()
         eventDestruct.fire().clear()
-        expectWeaklyReachable { "$className $this onDestruct" }
+        expectWeaklyReachable { "$debugClassName $this onDestruct" }
     }
 
     override fun onDestroy() {

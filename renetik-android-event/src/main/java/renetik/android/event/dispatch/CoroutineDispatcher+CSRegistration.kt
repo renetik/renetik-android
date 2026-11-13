@@ -13,7 +13,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import renetik.android.core.base.CSApplication.Companion.app
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.variable.CSWeakVariable.Companion.weak
 import renetik.android.core.logging.CSLog.logError
 import renetik.android.event.registration.CSRegistrationImpl
@@ -27,7 +27,7 @@ private class JobRegistrationImpl(
     override fun onCancel() {
         super.onCancel()
         job?.takeIf { !it.isCompleted }?.cancel(
-            CancellationException("$className cancel")
+            CancellationException("$debugClassName cancel")
         )
     }
 }

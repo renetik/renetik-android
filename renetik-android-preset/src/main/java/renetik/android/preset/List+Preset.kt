@@ -1,6 +1,6 @@
 package renetik.android.preset
 
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.Fun
 import renetik.android.event.change.CSHasChange
 import renetik.android.event.dispatch.CSDebouncer.Companion.debouncer
@@ -26,7 +26,7 @@ import renetik.android.preset.Preset
 inline fun <T : CSHasChange<*>> List<T>.onChangeLater(
     preset: Preset, crossinline function: Fun
 ): CSRegistration {
-    val registrations = CSRegistrationsMap(className)
+    val registrations = CSRegistrationsMap(debugClassName)
     val laterOnceFunction = registrations.debouncer { function() }
     forEach { registrations.register(it.onChange { laterOnceFunction() }) }
     return CSRegistration(

@@ -5,7 +5,7 @@ package renetik.android.event.change
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.Main
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.kotlin.primitives.isFalse
 import renetik.android.core.kotlin.primitives.isTrue
 import renetik.android.core.lang.value.isFalse
@@ -114,7 +114,7 @@ inline fun CSHasChangeValue<Boolean>.actionTrueLaunch(
     dispatcher: CoroutineDispatcher = Main,
     crossinline function: suspend (CSRegistration) -> Unit
 ): CSRegistration =
-    CSRegistrationsMap(className).also { registration ->
+    CSRegistrationsMap(debugClassName).also { registration ->
         registration + actionTrue {
             registration.launch(dispatcher) { function(registration) }
         }
@@ -137,7 +137,7 @@ inline fun CSHasChangeValue<Boolean>.actionFalseLaunch(
     dispatcher: CoroutineDispatcher = Main,
     crossinline function: suspend () -> Unit
 ): CSRegistration =
-    CSRegistrationsMap(className).also {
+    CSRegistrationsMap(debugClassName).also {
         it + actionFalse { it.launch(dispatcher) { function() } }
     }
 

@@ -1,7 +1,7 @@
 package renetik.android.event.change
 
 import kotlinx.coroutines.Dispatchers.Main
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.Fun
 import renetik.android.core.lang.SusFun
 import renetik.android.event.dispatch.CSDebouncer.Companion.debouncer
@@ -14,7 +14,7 @@ import kotlin.coroutines.CoroutineContext
 inline fun <T : CSHasChange<*>> List<T>.onChange(
     crossinline function: Fun
 ): CSRegistration {
-    val registrations = CSRegistrationsMap(className)
+    val registrations = CSRegistrationsMap(debugClassName)
     forEach {
         registrations.register(it.onChange {
             if (registrations.isActive) function()
@@ -33,7 +33,7 @@ inline fun <T : CSHasChange<*>> List<T>.action(
 inline fun <T : CSHasChange<*>> List<T>.onChangeLaterOnce(
     dispatcher: CoroutineContext = Main, crossinline function: SusFun
 ): CSRegistrations {
-    val registrations = CSRegistrationsMap(className)
+    val registrations = CSRegistrationsMap(debugClassName)
     val laterOnceFunction = registrations.debouncer(dispatcher) {
         if (registrations.isActive) function()
     }
@@ -49,7 +49,7 @@ inline fun <T : CSHasChange<*>> List<T>.actionLaterOnce(
     isActionNow: Boolean = false,
     crossinline function: () -> Unit
 ): CSRegistrations {
-    val registrations = CSRegistrationsMap(className)
+    val registrations = CSRegistrationsMap(debugClassName)
     val laterOnceFunction = registrations.debouncer {
         if (registrations.isActive) function()
     }

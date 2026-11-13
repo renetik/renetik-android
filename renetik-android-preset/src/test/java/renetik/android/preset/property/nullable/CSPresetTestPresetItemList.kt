@@ -1,6 +1,6 @@
 package renetik.android.preset.property.nullable
 
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.kotlin.collections.put
 import renetik.android.event.CSEvent
 import renetik.android.event.CSEvent.Companion.event
@@ -11,7 +11,7 @@ import renetik.android.preset.model.defaultCategory
 import renetik.android.preset.model.userCategory
 
 class CSPresetTestPresetItemList : renetik.android.preset.CSPresetItemList<CSPresetItem> {
-    override val id = className
+    override val id = debugClassName
     override val categories: List<String> = listOf(defaultCategory, userCategory)
     private val defaultPresetItems = mutableListOf<CSPresetItem>()
     private val userPresetItems = mutableListOf<CSPresetItem>()

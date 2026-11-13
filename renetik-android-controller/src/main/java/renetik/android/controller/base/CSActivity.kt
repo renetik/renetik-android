@@ -9,7 +9,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import renetik.android.core.android.content.isPermissionsGranted
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.logging.CSLog.logInfo
 import renetik.android.event.CSEvent.Companion.event
 import renetik.android.event.android.CSHasContext
@@ -37,7 +37,7 @@ abstract class CSActivity : AppCompatActivity(), CSVisibility, CSHasContext, CSV
         super.recreate()
     }
 
-    final override val registrations = CSRegistrationsMap(className)
+    final override val registrations = CSRegistrationsMap(debugClassName)
     final override val eventDestruct = event<Unit>()
     override val isDestructed: Boolean get() = registrations.isCanceled
     override fun onDestruct() {

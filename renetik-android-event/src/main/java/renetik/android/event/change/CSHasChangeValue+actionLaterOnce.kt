@@ -2,7 +2,7 @@ package renetik.android.event.change
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.Main
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.tuples.CSQuadruple
 import renetik.android.core.lang.tuples.CSQuintuple
 import renetik.android.core.lang.tuples.CSSeventuple
@@ -57,7 +57,7 @@ fun <Argument1, Argument2, Argument3, Argument4, Argument5, Argument6>
     dispatcher: CoroutineDispatcher = Main,
     onAction: suspend (Argument1, Argument2, Argument3, Argument4, Argument5, Argument6) -> Unit
 ): CSRegistration {
-    val registrations = CSRegistrationsMap(className)
+    val registrations = CSRegistrationsMap(debugClassName)
     var value1: Argument1? = null
     var value2: Argument2? = null
     var value3: Argument3? = null
@@ -102,7 +102,7 @@ fun <Argument1, Argument2, Argument3, Argument4, Argument5, Argument6, Argument7
     onAction: suspend (Argument1, Argument2, Argument3,
                        Argument4, Argument5, Argument6, Argument7) -> Unit
 ): CSRegistration {
-    val registrations = CSRegistrationsMap(className)
+    val registrations = CSRegistrationsMap(debugClassName)
     var value1: Argument1? = null
     var value2: Argument2? = null
     var value3: Argument3? = null

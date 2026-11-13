@@ -8,7 +8,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.kotlin.unexpected
 import renetik.android.core.lang.CSLayoutRes
 import renetik.android.core.lang.lazy.CSLazyNullableVar.Companion.lazyNullableVar
@@ -91,22 +91,22 @@ open class CSView<ViewType : View> : CSContext, CSHasParentView, CSViewInterface
     @Suppress("UNCHECKED_CAST")
     final override val view: ViewType
         get() = _view ?: run {
-            if (isDestructed) logErrorTrace { "$className $this Already destroyed" }
+            if (isDestructed) logErrorTrace { "$debugClassName $this Already destroyed" }
             layout?.let { setView(inflate(it)) }
                 ?: viewId?.let { setView(parentView.view<View>(viewId!!) as ViewType) }
                 ?: createView()?.let { setView(it) }
                 ?: (parentView.view as? ViewType).also { _view = it; onViewReady() }
-                ?: unexpected("$className: view could not be created")
+                ?: unexpected("$debugClassName: view could not be created")
         }
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun view(): View = _view ?: run {
-        if (isDestructed) logErrorTrace { "$className $this Already destroyed" }
+        if (isDestructed) logErrorTrace { "$debugClassName $this Already destroyed" }
         layout?.let { setView(context.inflateAsync(it, container)) }
             ?: viewId?.let { setView(parentView.view<View>(viewId!!) as ViewType) }
             ?: createView()?.let { setView(it) }
             ?: (parentView.view as? ViewType).also { _view = it; onViewReady() }
-            ?: unexpected("$className: view could not be created")
+            ?: unexpected("$debugClassName: view could not be created")
     }
 
     private fun setView(view: ViewType): ViewType {
@@ -205,7 +205,7 @@ open class CSView<ViewType : View> : CSContext, CSHasParentView, CSViewInterface
         // View doesn't have to be created in some cases
         _view?.let {
             if (it.tag == this) {
-                it.tag = "tag instance of $className removed, onDestroy called"
+                it.tag = "tag instance of $debugClassName removed, onDestroy called"
                 it.onDestruct()
             }
             _view = null

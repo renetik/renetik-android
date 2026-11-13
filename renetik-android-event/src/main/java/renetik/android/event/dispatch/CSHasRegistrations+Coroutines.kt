@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import renetik.android.core.base.CSApplication.Companion.app
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.lang.variable.CSWeakVariable.Companion.weak
 import renetik.android.event.registration.CSHasRegistrations
 import renetik.android.event.registration.CSRegistration
@@ -32,7 +32,7 @@ fun CSHasRegistrations.launch(
     func: suspend (JobRegistration) -> Unit,
 ): JobRegistration {
     val newRegistration = CompletableDeferred<JobRegistrationWrapper>()
-    val jobRegistration = context.launch(scope, className) { registration ->
+    val jobRegistration = context.launch(scope, debugClassName) { registration ->
         newRegistration.await().also {
             it.job = registration.job!!
             if (!it.isCanceled) {
@@ -58,7 +58,7 @@ fun CSHasRegistrations.launch(
     val newRegistration = CompletableDeferred<JobRegistrationWrapper>()
     val previous = registrations.map[key] as? JobRegistration
     registrations.cancel(key)
-    val jobRegistration = dispatcher.launch(className) { registration ->
+    val jobRegistration = dispatcher.launch(debugClassName) { registration ->
         previous?.waitToFinish()
         newRegistration.await().also {
             it.job = registration.job!!

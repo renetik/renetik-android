@@ -1,6 +1,6 @@
 package renetik.android.preset.model
 
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.kotlin.collections.put
 import renetik.android.event.CSEvent
 import renetik.android.event.CSEvent.Companion.event
@@ -9,7 +9,7 @@ import renetik.android.preset.CSPresetItem
 import renetik.android.preset.CSPresetItemList
 
 class TestCSPresetItemList(firstItemId: String) : CSPresetItemList<CSPresetItem> {
-    override val id = className
+    override val id = debugClassName
     override val eventReload: CSEvent<Unit> = event()
     override val eventRemove = event<CSPresetItem>()
     override val categories: List<String> = listOf(defaultCategory, userCategory)

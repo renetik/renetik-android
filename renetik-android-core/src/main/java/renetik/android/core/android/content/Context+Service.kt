@@ -19,7 +19,7 @@ import android.media.midi.MidiManager
 import android.os.PowerManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.location.LocationManagerCompat
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.logging.CSLog.logError
 import renetik.android.core.logging.CSLog.logInfo
 import java.lang.Integer.MAX_VALUE
@@ -41,7 +41,7 @@ fun <T> Context.ifHasMidi(function: (MidiManager) -> T): T? = midiManager?.let {
 @SuppressLint("WakelockTimeout")
 fun Context.wakeLock(levelAndFlags: Int): PowerManager.WakeLock {
     val lock = (getSystemService(POWER_SERVICE) as PowerManager)
-        .newWakeLock(levelAndFlags, "wakeLock:${className}")
+        .newWakeLock(levelAndFlags, "wakeLock:${debugClassName}")
     lock.acquire()
     if (lock.isHeld) logInfo { "Wake Lock held: $this" }
     else logError { "Wake Lock not held: $this" }

@@ -15,7 +15,7 @@ import androidx.annotation.ColorInt
 import androidx.core.graphics.scale
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import java.security.MessageDigest
 
 
@@ -25,7 +25,7 @@ class BorderBitmapTransformation(
     @ColorInt private val color: Int = BLACK) : BitmapTransformation() {
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) =
-        messageDigest.update(className.toByteArray(CHARSET))
+        messageDigest.update(debugClassName.toByteArray(CHARSET))
 
     private val paint1 = Paint().apply {
         isAntiAlias = true

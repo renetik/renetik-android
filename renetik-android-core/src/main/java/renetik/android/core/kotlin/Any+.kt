@@ -30,7 +30,7 @@ inline fun <T : Any> T.alsoIf(condition: Boolean, function: (T) -> Unit) =
 inline fun <T : Any> T.applyIf(condition: Boolean, function: (T).() -> Unit) =
     apply { if (condition) function(this) }
 
-inline val <T : Any> T.className: String get() = this::class.simpleName ?: "undefined-class-name"
+inline val <T : Any> T.debugClassName: String get() = this::class.simpleName ?: "undefined-class-name"
 
 fun Any?.toId() = (this as? CSHasId)?.id ?: toString()
 

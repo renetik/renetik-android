@@ -9,7 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import renetik.android.controller.navigation.CSNavigationView
 import renetik.android.controller.navigation.last
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.kotlin.unexpected
 import renetik.android.core.lang.CSLayoutRes
 import renetik.android.core.lang.lazy.CSLazyVal.Companion.lazyVal
@@ -202,7 +202,7 @@ open class CSActivityView<ViewType : View>
 
     override fun onDestruct() {
         if (isResume) onPause()
-        if (isDestructed) unexpected("$className $this Already destroyed")
+        if (isDestructed) unexpected("$debugClassName $this Already destroyed")
         super.onDestruct()
         parentActivityView = null
         activity = null

@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import renetik.android.core.android.content.CSToast.toast
-import renetik.android.core.kotlin.className
+import renetik.android.core.kotlin.debugClassName
 import renetik.android.core.kotlin.findCause
 import renetik.android.core.kotlin.primitives.isTrue
 import renetik.android.core.lang.CSEnvironment
@@ -52,9 +52,9 @@ abstract class CSApplication<ActivityType : AppCompatActivity> : Application(),
 
     private val cores = getRuntime().availableProcessors()
     val Default = Dispatchers.Default.limitedParallelism(max(1, cores - 1))
-        .named("$className Default")
+        .named("$debugClassName Default")
     val IO = Dispatchers.IO.limitedParallelism(5)
-        .named("$className IO")
+        .named("$debugClassName IO")
 
     override fun onCreate() {
         super.onCreate()
