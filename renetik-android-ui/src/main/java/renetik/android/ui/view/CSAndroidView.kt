@@ -7,8 +7,6 @@ import android.view.View.MeasureSpec.makeMeasureSpec
 import renetik.android.ui.R
 import renetik.android.ui.R.styleable.CSLayout_clipToOutline
 import renetik.android.ui.R.styleable.CSLayout_dispatchState
-import renetik.android.ui.R.styleable.CSLayout_goneIfHeightUntil
-import renetik.android.ui.R.styleable.CSLayout_goneIfWidthUntil
 import renetik.android.ui.R.styleable.CSLayout_maxHeight
 import renetik.android.ui.R.styleable.CSLayout_maxWidth
 import renetik.android.ui.R.styleable.CSLayout_minHeight
@@ -39,13 +37,6 @@ class CSAndroidViewBehavior(
             minHeight = attributes.getDimensionPixelSize(CSLayout_minHeight, -1)
             maxHeight = attributes.getDimensionPixelSize(CSLayout_maxHeight, -1)
             dispatchState = attributes.getBoolean(CSLayout_dispatchState, true)
-
-            val goneIfWidthUntil =
-                attributes.getDimensionPixelSize(CSLayout_goneIfWidthUntil, -1)
-            val goneIfHeightUntil =
-                attributes.getDimensionPixelSize(CSLayout_goneIfHeightUntil, -1)
-            if (goneIfWidthUntil != -1) view.gone(view.screenWidth <= goneIfWidthUntil)
-            else if (goneIfHeightUntil != -1) view.gone(view.screenHeight <= goneIfHeightUntil)
         } finally {
             attributes.recycle()
         }

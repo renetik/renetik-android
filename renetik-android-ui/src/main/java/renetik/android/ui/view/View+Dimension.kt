@@ -156,8 +156,6 @@ var View.heightFloat: Float
 val View.windowRectangle: Rect
     get() = Rect().also { getWindowVisibleDisplayFrame(it) }
 
-val View.screenWidth get() = context.resources.displayMetrics.widthPixels
-val View.screenHeight get() = context.resources.displayMetrics.heightPixels
 
 val View.rectangle: Rect
     get() = Rect(left, top, right, bottom)

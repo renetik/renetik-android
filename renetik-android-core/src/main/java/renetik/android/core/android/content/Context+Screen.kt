@@ -9,5 +9,3 @@ val Context.windowProfile: CSWindowProfile
 
 val Context.isPortrait get() = windowProfile.isPortrait
 val Context.isLandscape get() = windowProfile.isLandscape
-val Context.isTablet get() = windowProfile.isTablet
-val Context.isPhone get() = windowProfile.isPhone
