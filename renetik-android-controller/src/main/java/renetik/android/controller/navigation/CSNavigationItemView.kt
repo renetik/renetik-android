@@ -1,9 +1,12 @@
 package renetik.android.controller.navigation
 
+import android.view.Gravity.CENTER
 import android.view.Gravity.START
 import android.view.Gravity.TOP
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams
 import androidx.annotation.LayoutRes
@@ -16,9 +19,10 @@ import renetik.android.controller.navigation.CSNavigationItemAnimation.None
 import renetik.android.controller.navigation.CSNavigationItemAnimation.Slide
 import renetik.android.controller.navigation.CSNavigationItemAnimation.SlideFade
 import renetik.android.controller.navigation.CSNavigationItemPopupSide.Bottom
-import renetik.android.controller.navigation.CSNavigationItemPopupSide.Left
-import renetik.android.controller.navigation.CSNavigationItemPopupSide.Right
-import renetik.android.controller.navigation.CSNavigationItemPopupSide.Top
+import renetik.android.controller.navigation.CSNavigationPresentation.FullScreen
+import renetik.android.controller.navigation.CSNavigationPresentation.Popup
+import renetik.android.controller.navigation.CSNavigationPresentation.Window
+import renetik.android.core.android.content.dimensionInt
 import renetik.android.core.android.graphics.CSColor.Companion.colorRes
 import renetik.android.core.lang.CSLayoutRes.Companion.layout
 import renetik.android.event.CSEvent.Companion.event
@@ -26,23 +30,19 @@ import renetik.android.event.change.invoke
 import renetik.android.event.invoke
 import renetik.android.event.lifecycle.destruct
 import renetik.android.event.listen
+import renetik.android.event.registration.CSRegistration
 import renetik.android.event.registration.plus
+import renetik.android.event.registration.register
 import renetik.android.ui.R.color
 import renetik.android.ui.R.layout.cs_frame_match
 import renetik.android.ui.protocol.onHasSize
 import renetik.android.ui.protocol.registerAfterLayout
 import renetik.android.ui.view.add
 import renetik.android.ui.view.background
-import renetik.android.ui.view.bottomFloat
-import renetik.android.ui.view.heightWrap
-import renetik.android.ui.view.leftFloat
-import renetik.android.ui.view.locationInWindow
 import renetik.android.ui.view.onClick
 import renetik.android.ui.view.onLayoutChange
 import renetik.android.ui.view.passClicksUnder
-import renetik.android.ui.view.rightFloat
-import renetik.android.ui.view.topFloat
-import renetik.android.ui.widget.layoutMatch
+import renetik.android.ui.view.removeFromSuperview
 
 open class CSNavigationItemView(
     navigationParent: CSActivityView<out ViewGroup>,
@@ -69,20 +69,35 @@ open class CSNavigationItemView(
     ) : this(parent, contentWidthMarginDp, contentHeightMarginDp,
         viewLayout, null, null)
 
-    val viewContent: View by lazy {
-        val frameLayout = if (isFullScreen)
-            (fullScreenFrameLayout ?: frameLayout)
-        else frameLayout
-        (frameLayout?.let {
-            inflate<FrameLayout>(it).apply { add<View>(viewLayout, layoutMatch) }
-        } ?: inflate<View>(viewLayout))
+    private var layoutWidth = 0
+    private var layoutHeight = 0
+
+    val layoutView: View by lazy {
+        inflate<View>(viewLayout).also {
+            layoutWidth = it.layoutParams.width
+            layoutHeight = it.layoutParams.height
+        }
     }
+
+    @LayoutRes private var currentFrameLayout: Int? = frameLayout
+    private var currentFrameView: View? = null
+
+    /** Theme frame around [layoutView], or [layoutView] itself when there is no frame. */
+    private val frameView: View
+        get() = currentFrameView ?: framed(currentFrameLayout).also { currentFrameView = it }
+    private val isFramed get() = frameView !== layoutView
+
+    private var presentation: CSNavigationPresentation? = null
+    private var contentSize = CSContentSize.Layout
+    val isFullScreen get() = presentation == FullScreen
+    val isPopup get() = presentation is Popup
+    private val popupPlacement by lazy {
+        CSNavigationItemPopupPlacement(view, horizontalPadding, verticalPadding)
+    }
+    private var popupLayoutRegistration: CSRegistration? = null
 
     open var isBackNavigationAllowed = true
     open val isBackgroundDimmed = true
-    var isFullScreen = false
-    var isPopup = false
-        internal set
     val isOpen: Boolean get() = navigation?.controllers?.contains(this) == true
 
     open fun onViewControllerPush(navigation: CSNavigationView) = Unit
@@ -114,7 +129,12 @@ open class CSNavigationItemView(
 
     override fun onViewReady() {
         super.onViewReady()
-        view.add(viewContent)
+        view.add(frameView)
+    }
+
+    override fun onAddedToParentView() {
+        applyPresentation()
+        super.onAddedToParentView()
     }
 
     override fun onViewShowingFirstTime() {
@@ -159,77 +179,110 @@ open class CSNavigationItemView(
             None -> CSNavigationAnimation.None
         }
 
-    fun from(button: View, side: CSNavigationItemPopupSide = Bottom) = apply {
-        isPopup = true
-        selected(button)
-        dismissOnTouchOut(true)
-        isFullScreen = false
-        animation = Fade
-        viewContent.updateLayoutParams<LayoutParams> { gravity = START or TOP }
-        onHasSize {
-            when (side) {
-                Bottom -> positionDialogContentFromViewBottom(button)
-                Right -> positionDialogContentFromViewRight(button)
-                Left -> positionDialogContentFromViewLeft(button)
-                Top -> positionDialogContentFromViewTop(button)
+    /** Takes effect when shown; its size is applied like [resizeContent]. */
+    fun present(presentation: CSNavigationPresentation) {
+        this.presentation = presentation
+        when (presentation) {
+            is Popup -> {
+                contentSize = contentSize.overriddenBy(presentation.size)
+                selected(presentation.anchor)
+                dismissOnTouchOut()
             }
-            correctContentOverflow()
+            is Window -> contentSize = contentSize.overriddenBy(presentation.size)
+            FullScreen -> Unit
         }
-        this + view.onLayoutChange(::correctContentOverflow)
     }
 
-    private fun positionDialogContentFromViewBottom(fromView: View) {
-        val fromViewLocation = fromView.locationInWindow
-        val fromViewTopCenterX = fromViewLocation.x + (fromView.width / 2)
-        var desiredX = fromViewTopCenterX.toFloat() - (viewContent.width / 2)
-        if (desiredX + viewContent.width > width - horizontalPadding)
-            desiredX -= (desiredX + viewContent.width) - (width - horizontalPadding)
-        if (desiredX < horizontalPadding) desiredX = horizontalPadding
-        viewContent.x = desiredX
-        viewContent.y = fromViewLocation.y.toFloat() + fromView.height
+    /** Sets the dimensions [size] defines, the others keep their current size. */
+    fun resizeContent(size: CSContentSize) {
+        contentSize = contentSize.overriddenBy(size)
+        if (isOpen) applyPresentation()
+    }
+
+    fun from(button: View, side: CSNavigationItemPopupSide = Bottom) = apply {
+        present(Popup(button, side))
+    }
+
+    private fun applyPresentation() {
+        useFrame(if (isFullScreen) fullScreenFrameLayout ?: frameLayout else frameLayout)
+        when (val presentation = presentation) {
+            null -> applyContentSize()
+            is Popup -> placePopup(presentation)
+            is Window -> placeWindow()
+            FullScreen -> layoutFullScreen()
+        }
+    }
+
+    private fun useFrame(@LayoutRes layout: Int?) {
+        if (layout == currentFrameLayout) return
+        currentFrameLayout = layout
+        val previousFrameView = currentFrameView ?: return
+        val root = previousFrameView.parent as? ViewGroup
+        val index = root?.indexOfChild(previousFrameView) ?: -1
+        root?.removeView(previousFrameView)
+        currentFrameView = framed(layout)
+        root?.addView(frameView, index)
+    }
+
+    private fun framed(@LayoutRes frame: Int?): View =
+        frame?.let {
+            inflate<ViewGroup>(it).apply {
+                // Frames consume touches so dismissOnTouchOut reacts only outside the window.
+                isClickable = true
+                add(layoutView)
+            }
+        } ?: layoutView.removeFromSuperview()
+
+    private fun placePopup(popup: Popup) {
+        frameView.updateLayoutParams<LayoutParams> { gravity = START or TOP }
+        sizeFrame(WRAP_CONTENT)
+        applyContentSize()
+        onHasSize { popupPlacement.place(frameView, popup.anchor, popup.side) }
+        popupLayoutRegistration = register(popupLayoutRegistration,
+            view.onLayoutChange(::keepPopupInside))
+    }
+
+    private fun keepPopupInside() = popupPlacement.keepInside(frameView)
+
+    private fun placeWindow() {
+        frameView.updateLayoutParams<LayoutParams> { gravity = CENTER }
+        sizeFrame(WRAP_CONTENT)
+        applyContentSize()
+        registerAfterLayout(::shrinkWindowToScreen)
+    }
+
+    private fun layoutFullScreen() {
+        sizeFrame(MATCH_PARENT)
+        layoutView.updateLayoutParams {
+            width = MATCH_PARENT
+            height = MATCH_PARENT
+        }
+    }
+
+    private fun sizeFrame(size: Int) {
+        if (isFramed) frameView.updateLayoutParams {
+            width = size
+            height = size
+        }
+    }
+
+    private fun applyContentSize() = layoutView.updateLayoutParams {
+        width = contentSize.width?.let { dimensionInt(it) } ?: layoutWidth
+        height = contentSize.height?.let { dimensionInt(it) } ?: layoutHeight
+    }
+
+    private fun shrinkWindowToScreen() {
+        val maxWidth = (screenAvailableWidth -
+                if (isFramed) frameView.paddingLeft + frameView.paddingRight else 0).toInt()
+        val maxHeight = (screenAvailableHeight -
+                if (isFramed) frameView.paddingTop + frameView.paddingBottom else 0).toInt()
+        if (layoutView.width <= maxWidth && layoutView.height <= maxHeight) return
+        layoutView.updateLayoutParams {
+            if (layoutView.width > maxWidth) width = maxWidth
+            if (layoutView.height > maxHeight) height = maxHeight
+        }
     }
 
     val screenAvailableHeight get() = height - verticalPadding * 2
     val screenAvailableWidth get() = width - horizontalPadding * 2
-
-    private fun positionDialogContentFromViewTop(fromView: View) {
-        val fromViewLocation = fromView.locationInWindow
-        val fromViewTopCenterX = fromViewLocation.x + (fromView.width / 2)
-        var desiredX = fromViewTopCenterX.toFloat() - (viewContent.width / 2)
-        if (desiredX + viewContent.width > screenAvailableWidth) desiredX -= (desiredX + viewContent.width) - screenAvailableWidth
-        if (desiredX < horizontalPadding) desiredX = horizontalPadding
-        viewContent.x = desiredX
-        viewContent.y =
-            fromViewLocation.y.toFloat() - viewContent.height - verticalPadding
-    }
-
-    private fun correctContentOverflow() {
-        if (viewContent.bottomFloat > screenAvailableHeight)
-            viewContent.topFloat -= viewContent.bottomFloat - screenAvailableHeight
-        if (viewContent.rightFloat > screenAvailableWidth)
-            viewContent.leftFloat -= viewContent.rightFloat - screenAvailableWidth
-    }
-
-    private fun positionDialogContentFromViewRight(fromView: View) {
-        val fromViewLocation = fromView.locationInWindow
-        val fromViewLeftCenterY = fromViewLocation.y + (fromView.height / 2)
-        var desiredY = fromViewLeftCenterY.toFloat() - (viewContent.height / 2)
-        if (desiredY + viewContent.height > screenAvailableHeight)
-            desiredY -= (desiredY + viewContent.height) - screenAvailableHeight
-        if (desiredY < verticalPadding) desiredY = verticalPadding
-        viewContent.x = fromViewLocation.x.toFloat() + fromView.width
-        viewContent.y = desiredY
-    }
-
-    private fun positionDialogContentFromViewLeft(fromView: View) {
-        val fromViewLocation = fromView.locationInWindow
-        viewContent.x = fromViewLocation.x.toFloat() - viewContent.width
-        viewContent.y = fromViewLocation.y.toFloat() - verticalPadding
-    }
-
-    fun wrapContentIfNotFullscreen() {
-        if (isFullScreen) return
-        viewContent.heightWrap()
-        registerAfterLayout(::correctContentOverflow)
-    }
 }

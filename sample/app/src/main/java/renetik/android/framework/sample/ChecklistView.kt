@@ -35,7 +35,7 @@ class ChecklistView(parent: MainView) :
         super.onViewReady()
         applySystemBarInsets()
         val container: LinearLayout =
-            viewContent.findView(R.id.sample_checklist_container)!!
+            layoutView.findView(R.id.sample_checklist_container)!!
         container.addView(TextView(context).text("Renetik Android 2.0")
             .apply { textSize = 22f })
         container.addView(TextView(context)
@@ -46,10 +46,10 @@ class ChecklistView(parent: MainView) :
     }
 
     private fun applySystemBarInsets() {
-        val (left, top, right, bottom) = viewContent.paddingLeft to
-                viewContent.paddingTop to viewContent.paddingRight to
-                viewContent.paddingBottom
-        ViewCompat.setOnApplyWindowInsetsListener(viewContent) { view, windowInsets ->
+        val (left, top, right, bottom) = layoutView.paddingLeft to
+                layoutView.paddingTop to layoutView.paddingRight to
+                layoutView.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(layoutView) { view, windowInsets ->
             val insets = windowInsets.getInsets(systemBars() or displayCutout())
             view.updatePadding(
                 left + insets.left, top + insets.top,
@@ -57,7 +57,7 @@ class ChecklistView(parent: MainView) :
             )
             windowInsets
         }
-        ViewCompat.requestApplyInsets(viewContent)
+        ViewCompat.requestApplyInsets(layoutView)
     }
 
     private fun row(check: ModuleCheck): LinearLayout =
