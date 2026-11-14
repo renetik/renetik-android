@@ -39,7 +39,7 @@ fun <T : CSNavigationItemView> T.center() = apply {
             }
         if (viewContent.width > screenAvailableWidth)
             viewContent.updateLayoutParams<LayoutParams> {
-                width = screenAvailableHeight.toInt()
+                width = screenAvailableWidth.toInt()
             }
     }
 }
