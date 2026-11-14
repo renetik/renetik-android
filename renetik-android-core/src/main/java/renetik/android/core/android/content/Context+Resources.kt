@@ -5,11 +5,11 @@ import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.text.Html
 import android.text.Spanned
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import renetik.android.core.android.text.parseFormatted
 import renetik.android.core.lang.catchAllWarn
 import renetik.android.core.lang.catchErrorReturnNull
 import renetik.android.core.lang.tryAndFinally
@@ -17,11 +17,7 @@ import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 
-fun Context.formatted(@StringRes resId: Int): Spanned =
-    Html.fromHtml(
-        getString(resId).replace("\n", "<br>")
-            .replace("[B]", "<b>").replace("[/B]", "</b>"), 0
-    )
+fun Context.formatted(@StringRes resId: Int): Spanned = getString(resId).parseFormatted()
 
 fun Context.resourceBytes(id: Int) = catchAllWarn {
     val stream = resources.openRawResource(id)
