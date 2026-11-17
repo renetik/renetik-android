@@ -137,7 +137,7 @@ class CSVerticalTextView @JvmOverloads constructor(
     }
 
     private fun makeHintLayout(): Layout {
-        val availableWidth = height - paddingTop - paddingBottom
+        val availableWidth = (height - paddingTop - paddingBottom).coerceAtLeast(0)
         val alignment = layout?.alignment ?: Layout.Alignment.ALIGN_NORMAL
         return StaticLayout.Builder.obtain(hint, 0, hint.length, paint, availableWidth)
             .setAlignment(alignment)

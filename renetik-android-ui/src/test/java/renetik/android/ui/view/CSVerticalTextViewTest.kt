@@ -57,6 +57,18 @@ class CSVerticalTextViewTest {
         assert(expected = 30f, actual = autoSizing(null).textSize)
     }
 
+    /** The hint gets no room along the column, which StaticLayout must not see as negative. */
+    @Test
+    fun hintInViewShorterThanItsPaddingDraws() {
+        val view = CSVerticalTextView(context).apply {
+            hint = "C4"
+            setPadding(0, 30, 0, 30)
+            measure(makeMeasureSpec(40, EXACTLY), makeMeasureSpec(20, EXACTLY))
+            layout(0, 0, 40, 20)
+        }
+        view.draw(Canvas(Bitmap.createBitmap(40, 20, Bitmap.Config.ARGB_8888)))
+    }
+
     /** Unlike a rotated plain TextView, this reports the on screen box, not the rotated one. */
     @Test
     fun measuredSizeIsSwappedBackToTheOnScreenBox() {
