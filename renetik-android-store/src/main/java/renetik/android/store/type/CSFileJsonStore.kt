@@ -119,7 +119,7 @@ class CSFileJsonStore(
                     delay(SAVE_DELAY)
                     saveData().onFailure {
                         if (it is OutOfMemoryError || it is CancellationException) throw it
-                        else logError(it)
+                        else logSaveFailure(it)
                     }
                     isWriteFinished.setTrue()
                 }
@@ -139,8 +139,11 @@ class CSFileJsonStore(
     }
 
     private fun onFailure(it: Throwable) {
-        if (it !is CancellationException) logError(it)
+        if (it !is CancellationException) logSaveFailure(it)
     }
+
+    private fun logSaveFailure(throwable: Throwable) =
+        logError(throwable, "saving ${file.path} failed")
 
     @Suppress("unused")
     suspend fun waitForWriteFinish() = isWriteFinished.waitForTrue()
