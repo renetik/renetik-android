@@ -2,7 +2,7 @@ package renetik.android.store.type
 
 import renetik.android.core.base.CSApplication.Companion.app
 import renetik.android.core.java.io.readString
-import renetik.android.core.java.io.write
+import renetik.android.core.java.io.writeAtomic
 import renetik.android.core.kotlin.changeIf
 import renetik.android.core.lang.CSEnvironment
 import renetik.android.json.CSJson
@@ -33,5 +33,5 @@ class CSSimpleFileJsonStore(
     fun snapshotJson(): String = synchronized(data) { data.toMap() }
         .changeIf(isJsonPretty) { toSortedMap() }.toJson(formatted = isJsonPretty)
 
-    fun save() = file.write(snapshotJson())
+    fun save() = file.writeAtomic(snapshotJson())
 }
