@@ -5,7 +5,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.HorizontalScrollView
-import renetik.android.core.logging.CSLog.logWarn
+import renetik.android.ui.view.touch.logPointerIndexBugOrThrow
 
 open class CSHorizontalScrollView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
@@ -24,7 +24,7 @@ open class CSHorizontalScrollView @JvmOverloads constructor(
     override fun onTouchEvent(ev: MotionEvent): Boolean = try {
         isScrollEnabled && super.onTouchEvent(ev)
     } catch (e: IllegalArgumentException) {
-        if (e.isFrameworkBug()) logWarn(e) else throw e
+        e.logPointerIndexBugOrThrow()
         false
     }
 
@@ -39,11 +39,8 @@ open class CSHorizontalScrollView @JvmOverloads constructor(
         try {
             isInterceptedTouch = super.onInterceptTouchEvent(ev)
         } catch (e: IllegalArgumentException) {
-            if (e.isFrameworkBug()) logWarn(e) else throw e
+            e.logPointerIndexBugOrThrow()
         }
         return isInterceptedTouch
     }
-
-    private fun IllegalArgumentException.isFrameworkBug() =
-        this.message?.contains("pointerIndex", ignoreCase = true) == true
 }
