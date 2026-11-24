@@ -4,12 +4,12 @@ buildscript {
         min_sdk_version = 26
         kotlin_version = '2.4.10'
         coroutines_version = '1.11.0'
-        appcompat_version = '1.7.1'
+        appcompat_version = '1.8.0'
         material_version = '1.9.0'
-        ktx_version = '1.19.0'
+        ktx_version = '1.19.1'
         junit_version = '4.13.2'
         mockk_version = '1.14.9'
-        robolectric_version = '4.16.1'
+        robolectric_version = '4.18.1'
         play_version = '18.0.1'
         is_renetik_development = false
         is_renetik_library_network = true

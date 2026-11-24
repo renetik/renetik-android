@@ -6,7 +6,7 @@ android {
 }
 dependencies {
     // Fixes: Cannot access 'androidx.navigationevent.NavigationEventDispatcherOwner' in Android Studio editor.
-    implementation 'androidx.navigationevent:navigationevent:1.1.2'
+    implementation 'androidx.navigationevent:navigationevent:1.2.0'
 
     testImplementation project(':renetik-android-testing')
 }
