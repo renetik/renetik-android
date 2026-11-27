@@ -49,6 +49,9 @@ class CSPresetListItem<
     /** Whether the stored id has no item in the list, so the preset holds only its own data. */
     val isNotFound: Boolean get() = value == notFoundItem
 
+    /** Whether the preset links the item it starts with when its store holds no link. */
+    val isDefaultItem: Boolean get() = value.id == getDefaultItem().id
+
     /** The id this preset links, which stays as loaded or linked while its item is not found. */
     val linkedId: String
         get() = if (isNotFound) parentStore.getString(key) ?: value.toId() else value.toId()
